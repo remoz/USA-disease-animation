@@ -160,8 +160,8 @@
 	// ################################
 
 	
-	for day in flights:
-		for flight in day:
+	flights.forEach(function(day) {
+		day.forEach(function(flight) {
 			// ############################
 			// ##### ANIMATE FLIGHT  ######
 			// ############################
@@ -171,28 +171,31 @@
 			// animateFlight(srcCoords, destCoords);
 			fly(airports[flight.src],airports[flight.dest]);
 		// Collect and display dest airport's spread Ratio
-		for airport in airports:
-			airport.spreadRatio = (airport.newInfected+airport.oldInfected)/airport.incoming
+		for (airport in airports) {
+			var a = airports[airport]
+			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
 			// ##############################################
 			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
 			// ##############################################
 
 			// Get people off planes into states
-			states[airport.state].population += airport.incoming
-			airport.incoming = 0
-			states[airport.state].newInfected += airport.newInfected
-			airport.newInfected = 0
-			states[airport.state].oldinfected += airport.oldInfected
-			airport.oldInfected = 0
-
+			states[a.state].population += a.incoming
+			a.incoming = 0
+			states[a.state].newInfected += a.newInfected
+			a.newInfected = 0
+			states[a.state].oldinfected += a.oldInfected
+			a.oldInfected = 0
+		}
 		// ################################
 		// ##### UPDATE STATE COLORS ######
 		// ################################
 
 		// Now take time to dissipate and spread disease
-		for state in states:
-			state.oldInfected += state.newInfected
-			state.newInfected = r0*state.newInfected
+		for (state in states) {
+			var s = states[state];
+			s.oldInfected += s.newInfected
+			s.newInfected = r0*s.newInfected
+		}
 		// ################################
 		// ##### UPDATE STATE COLORS ######
 		// ################################
@@ -200,6 +203,9 @@
 	// ##############################################
 	// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
 	// ##############################################
+
+		});
+	});
 
 
 
