@@ -37,13 +37,16 @@
 				color: 'ffffff'};
 		});
 	});
+	console.log("I'M SUPPOSED TO BE DONE FIRST");
+	console.log(states);
 
 	function randomState() {
 	    var result;
 	    var count = 0;
-	    for (var state in states)
+	    for (state in states) {
 	        if (Math.random() < 1/++count)
 	           result = state;
+	   }
 	    return result;
 	}
 
@@ -99,7 +102,7 @@
 			}
 			m = parseInt(f.Month);
 			if (m === 2) {
-				break;
+				continue;
 			}
 			d = parseInt(f.DayofMonth);
 			flights[(d-1)].push({
@@ -153,6 +156,7 @@
 	
 
 	for (var i = 0; i < 100; i++) {
+		console.log('HELLLOOO')
 		states[randomState()].newInfected += 1
 	}
 	// ################################
