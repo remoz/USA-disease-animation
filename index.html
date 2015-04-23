@@ -136,7 +136,7 @@ d3.json("us.json", function(error, shapes) {
 	for(var airport in airports){
 		var latitude = airports[airport].latitude;
 		var longitude = airports[airport].longitude;
-		
+		 
 		svg.append("circle").attr("r",1).attr("fill", "red").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
 		
 
@@ -217,15 +217,16 @@ d3.json("us.json", function(error, shapes) {
 	// Disease spread is equal to r0 for each new infective
 	// Old infectives no longer infect other people
 	
-
+/*
 	for (var i = 0; i < 100; i++) {
-		states[randomState()].newInfected += 1
+		states[randomState()].newInfected = states[randomState()].newInfected + 1;
 	}
+*/
 	// ################################
 	// ##### UPDATE STATE COLORS ######
 	// ################################
 
-	
+/*	
 	flights.forEach(function(day) {
 		day.forEach(function(flight) {
 			// ############################
@@ -274,9 +275,10 @@ d3.json("us.json", function(error, shapes) {
 	});
 
 
-
+*/
+	
+	
 	</script>
-
 
 
   </body>
