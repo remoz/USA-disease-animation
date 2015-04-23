@@ -18,11 +18,34 @@
 
 
 <div id="map"></div>
-<button type="button" id="sample">Click Me!</button>
+<button type="button" id="set">Set Map!</button>
+<button type="button" id="sample">Then Click Me!</button>
 
 
 <script>
+
+// Append airports and also set colorings/ Ro for the trial
+d3.select("#set").on("click", function () {
+
+	for(var airport in airports){
+		var latitude = airports[airport].latitude;
+		var longitude = airports[airport].longitude;
+		
+		 
+		 if(projection([longitude, latitude]) != null ){
+		svg.append("circle").attr("r",1).attr("fill", "red").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
+		}
+	};
+	
+
+});
+
+
 d3.select("#sample").on("click", function () {
+
+
+	
+
 	// Disease spread is equal to r0 for each new infective
 	// Old infectives no longer infect other people
 	
@@ -192,15 +215,7 @@ d3.json("us.json", function(error, shapes) {
 	});
 
 
-	for(var airport in airports){
-		var latitude = airports[airport].latitude;
-		var longitude = airports[airport].longitude;
-		 
-		svg.append("circle").attr("r",1).attr("fill", "red").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
-		
 
-	};
-	
 	
 	// FLIGHT STUFF
 	var flightsCSV = [];
