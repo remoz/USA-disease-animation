@@ -42,9 +42,9 @@ d3.select("#sample").on("click", function () {
 			// ##### ANIMATE FLIGHT  ######
 			// ############################
 			// something like...
-			// srcCoords = [airports[flight.src].latitude, airports[flight.src].latitude]
-			// destCoords = blah blah...
-			// animateFlight(srcCoords, destCoords);
+			/*srcCoords = [airports[flight.src].latitude, airports[flight.src].latitude]
+			destCoords = blah blah...
+			animateFlight(srcCoords, destCoords);*/
 			fly(airports[flight.src],airports[flight.dest]);
 		// Collect and display dest airport's spread Ratio
 		for (airport in airports) {
@@ -227,13 +227,25 @@ d3.json("us.json", function(error, shapes) {
 				continue;
 			}
 			d = parseInt(f.DayofMonth);
-			flights[(d-1)].push({
+			fly = {
 				src: f.Origin,
 				dest: f.Dest,
 				dist: f.Distance
-			});
+			}
+			if (isValidLoc(fly)) {
+				flights[(d-1)].push(fly);
+			};
 		};
 	});
+
+
+	// Checks to see if its source and destination
+	// airports are valid locations on the projection
+	function isValidLoc(flight) {
+		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
+		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
+		return (projection(srcCoords) != null) && (projection(destCoords) != null);
+	}
 
 	// Assume 100 people on each flight
 	// src and dest are objects in airport
