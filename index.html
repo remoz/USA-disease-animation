@@ -10,7 +10,10 @@
 	<!-- Load the d3 library. -->
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
+<style>
+body { background-color: #51A5BA}
 
+</style>
 </head>
 <body>
 
@@ -18,9 +21,20 @@
 
 
 <div id="map"></div>
+<select id="diseasechoice">
+  <option value="18">Measles</option>
+  <option value="10">Mumps</option>
+  <option value="4">AIDS</option>
+  <option value="4">SARS</option>
+    <option value="2">Ebola</option>
+</select>
+
 <button type="button" id="set">Set Map!</button>
 <button type="button" id="sample">Then Click Me!</button>
 
+<div id="feedback">
+
+</div>
 
 <script>
 
@@ -28,42 +42,10 @@
 
 // r0 = # of ppl one sick person will infect on average
 var r0s = {Measles: 18, Mumps: 10, AIDS: 4, SARS: 4, Ebola: 2}
+var r0 = 18;
 
-labels = ["A", "B", "C", "D"];
-options = [0, 1, 2, 3];
-
-// Build the dropdown menu
-d3.select("#drop")
-    .append("select")
-    .selectAll("option")
-    .data(options)
-    .enter()
-    .append("option")
-    // Provide available text for the dropdown options
-    .text(function(d) {return labels[d];})
-
-d3.select('select')
-    .on("change", function() {
-    key = this.selectedIndex;
-    d3.selectAll('circle')
-        .transition()
-        .duration(300)
-        .ease("quad")
-        .attr( 'r', 5)
-        .attr('cx', function(d) {return d.x;})
-        .attr('cy', function(d) {return d.y;})
-        // if a data point is selected highlight other 
-        // data points of the same color
-        .style('fill', function(d, i) { 
-            if (d.label == key) 
-            {return fill_arr[key]}
-            else {return "#ccc"}
-        ;})
-    });
-
-
-
-// Append airports and also set colorings/ Ro for the trial
+// Click button to set Map
+//Append airports and also set colorings/ Ro for the trial
 d3.select("#set").on("click", function () {
 
 	for(var airport in airports){
@@ -72,14 +54,18 @@ d3.select("#set").on("click", function () {
 		
 		 
 		 if(projection([longitude, latitude]) != null ){
-		svg.append("circle").attr("r",1).attr("fill", "red").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
+		svg.append("circle").attr("r",1).attr("fill", "black").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
 		}
 	};
 	
-
+	var selectedValue = document.getElementById("diseasechoice").value;
+	
+	r0 = parseInt( selectedValue);
+	return r0;
 });
 
 
+// Click button to start trial
 d3.select("#sample").on("click", function () {
 
 
@@ -177,7 +163,7 @@ d3.json("us.json", function(error, shapes) {
 		var statePaths = svg.append("g");
 		statePaths.selectAll("path").data(states).enter()
 		.append("path").attr("d", path)
-		.style("fill", "black").style("opacity", 0.7).style("stroke", "#ccc");
+		.style("fill", "#87E293").style("opacity", 0.7).style("stroke", "#51A5BA");
 	});
 
 
