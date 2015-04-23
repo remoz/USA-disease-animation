@@ -23,7 +23,68 @@
 
 <script>
 d3.select("#sample").on("click", function () {
-	alert('Hello!');
+	// Disease spread is equal to r0 for each new infective
+	// Old infectives no longer infect other people
+	
+
+	for (var i = 0; i < 100; i++) {
+		states[randomState()].newInfected = states[randomState()].newInfected + 1;
+	}
+
+	// ################################
+	// ##### UPDATE STATE COLORS ######
+	// ################################
+
+	
+	flights.forEach(function(day) {
+		day.forEach(function(flight) {
+			// ############################
+			// ##### ANIMATE FLIGHT  ######
+			// ############################
+			// something like...
+			// srcCoords = [airports[flight.src].latitude, airports[flight.src].latitude]
+			// destCoords = blah blah...
+			// animateFlight(srcCoords, destCoords);
+			fly(airports[flight.src],airports[flight.dest]);
+		// Collect and display dest airport's spread Ratio
+		for (airport in airports) {
+			var a = airports[airport]
+			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
+			// ##############################################
+			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
+			// ##############################################
+
+			// Get people off planes into states
+			states[a.state].population += a.incoming
+			a.incoming = 0
+			states[a.state].newInfected += a.newInfected
+			a.newInfected = 0
+			states[a.state].oldinfected += a.oldInfected
+			a.oldInfected = 0
+		}
+		// ################################
+		// ##### UPDATE STATE COLORS ######
+		// ################################
+
+		// Now take time to dissipate and spread disease
+		for (state in states) {
+			var s = states[state];
+			s.oldInfected += s.newInfected
+			s.newInfected = r0*s.newInfected
+		}
+		// ################################
+		// ##### UPDATE STATE COLORS ######
+		// ################################
+
+	// ##############################################
+	// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
+	// ##############################################
+
+		});
+	});
+
+
+
 	
 	});
 	
@@ -212,68 +273,7 @@ d3.json("us.json", function(error, shapes) {
 	// #########################################################
 
 
-	// Disease spread is equal to r0 for each new infective
-	// Old infectives no longer infect other people
 	
-/*
-	for (var i = 0; i < 100; i++) {
-		states[randomState()].newInfected = states[randomState()].newInfected + 1;
-	}
-*/
-	// ################################
-	// ##### UPDATE STATE COLORS ######
-	// ################################
-
-/*	
-	flights.forEach(function(day) {
-		day.forEach(function(flight) {
-			// ############################
-			// ##### ANIMATE FLIGHT  ######
-			// ############################
-			// something like...
-			// srcCoords = [airports[flight.src].latitude, airports[flight.src].latitude]
-			// destCoords = blah blah...
-			// animateFlight(srcCoords, destCoords);
-			fly(airports[flight.src],airports[flight.dest]);
-		// Collect and display dest airport's spread Ratio
-		for (airport in airports) {
-			var a = airports[airport]
-			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
-			// ##############################################
-			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
-			// ##############################################
-
-			// Get people off planes into states
-			states[a.state].population += a.incoming
-			a.incoming = 0
-			states[a.state].newInfected += a.newInfected
-			a.newInfected = 0
-			states[a.state].oldinfected += a.oldInfected
-			a.oldInfected = 0
-		}
-		// ################################
-		// ##### UPDATE STATE COLORS ######
-		// ################################
-
-		// Now take time to dissipate and spread disease
-		for (state in states) {
-			var s = states[state];
-			s.oldInfected += s.newInfected
-			s.newInfected = r0*s.newInfected
-		}
-		// ################################
-		// ##### UPDATE STATE COLORS ######
-		// ################################
-
-	// ##############################################
-	// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
-	// ##############################################
-
-		});
-	});
-
-
-*/
 	
 	
 	</script>
