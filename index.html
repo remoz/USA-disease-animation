@@ -18,10 +18,16 @@
 
 
 <div id="map"></div>
-
+<button type="button" id="sample">Click Me!</button>
 
 
 <script>
+d3.select("#sample").on("click", function () {
+	alert('Hello!');
+	
+	});
+	
+	
 // USA Map work, using help from 0225 notes
 
 var width = 960,
@@ -54,14 +60,6 @@ d3.json("us.json", function(error, shapes) {
 
 
 
-
-</script>
-
-
-
-
-
-	<script>
 
 	// svg plane drawing taken from the blog
 	var plane = svg.append("path")
