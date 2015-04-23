@@ -242,13 +242,13 @@ d3.json("us.json", function(error, shapes) {
 				continue;
 			}
 			d = parseInt(f.DayofMonth);
-			fly = {
+			flyer = {
 				src: f.Origin,
 				dest: f.Dest,
 				dist: f.Distance
 			}
-			if (isValidLoc(fly)) {
-				flights[(d-1)].push(fly);
+			if (isValidLoc(flyer)) {
+				flights[(d-1)].push(flyer);
 			};
 		};
 	});
