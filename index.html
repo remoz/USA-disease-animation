@@ -12,12 +12,14 @@
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
 <style>
 body { background-color: #51A5BA}
-
+#intro{
+		background-color: 
+}
 </style>
 </head>
 <body>
 
-
+<div id="intro"> Info 3300: Disease and 'Murika</div>
 
 
 <div id="map"></div>
@@ -158,10 +160,10 @@ var populationScale = d3.scale.linear().domain([-5, 0, 5]).range(["#d8b365", "#f
 
 d3.json("us.json", function(error, shapes) {
 	counties = topojson.feature(shapes, shapes.objects.counties).features;
-	states = topojson.feature(shapes, shapes.objects.states).features;
+	states1 = topojson.feature(shapes, shapes.objects.states).features;
 	
 		var statePaths = svg.append("g");
-		statePaths.selectAll("path").data(states).enter()
+		statePaths.selectAll("path").data(states1).enter()
 		.append("path").attr("d", path)
 		.style("fill", "#87E293").style("opacity", 0.7).style("stroke", "#51A5BA");
 	});
