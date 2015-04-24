@@ -394,7 +394,7 @@ if(percent_infected == NaN){
 	function flightsPerDay(day,dayno,callback1,callback2) {
 		if (dayno === 28) {return;}
 		counter = 0
-		var arrays = [], size = 100;
+		var arrays = [], size = 10;
 
 		while (day.length > 0)
    		arrays.push(day.splice(0, size));
@@ -402,19 +402,20 @@ if(percent_infected == NaN){
    		arrays.forEach(function(flights) {
 			callback2(flights,0);
 		});
-		callback1(dayno,spreadDisease);
+		//callback1(dayno,spreadDisease);
 	}
 
 
 	function flightsPerChunk(chunk,no) {
 		flight = chunk[no];
+		if (flight === undefined) {return;}
 		//chunk.forEach(function(flight) {
 		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
 		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
 		console.log('going into animateFlight');
 		animateFlight(srcCoords, destCoords,chunk,no);
 		console.log('exited animateFlight');
-		fly(airports[flight.src],airports[flight.dest]);
+		//fly(airports[flight.src],airports[flight.dest]);
 		//});
 	}
 
@@ -435,7 +436,7 @@ if(percent_infected == NaN){
 			states[a.state].oldinfected += a.oldInfected
 			a.oldInfected = 0
 		}
-		callback(dayno,flightsPerDay);
+		//callback(dayno,flightsPerDay);
 	}
 
 	function spreadDisease(dayno,callback) {
@@ -444,7 +445,7 @@ if(percent_infected == NaN){
 			s.oldInfected += s.newInfected
 			s.newInfected = r0*s.newInfected
 		}
-		callback(flights[dayno],dayno+1,unloadPlane,flightsPerChunk);
+		//callback(flights[dayno],dayno+1,unloadPlane,flightsPerChunk);
 	}
 
 
