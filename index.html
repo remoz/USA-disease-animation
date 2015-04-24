@@ -12,7 +12,7 @@
 	<script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
 <style>
-body { background-color: #51A5BA}
+body { background-color: #51A5BA;}
 #intro{
 	font-family: 'Lato', sans-serif;
 	font-weight: 300;
@@ -144,8 +144,7 @@ d3.select("#set").on("click", function () {
 	};
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
-	
-	drawmap(states, true);
+
 	
 	r0 = parseInt( selectedValue);
 	return r0;
@@ -203,9 +202,7 @@ var g = svg.append("g");
 var usdaAtlas;
 
 // kept for later use involving the color changing based on infection
-var populationScale = d3.scale.linear().domain([0, 0, 1]).range(["#d8b365", "#f5f5f5", "#5ab4ac"]);
 
-d3.selectAll('.something').style('fill', 'white')
 
 console.log(states);
 drawmap(states, false);
@@ -220,29 +217,9 @@ g.append("g")
     .enter().append("path").attr("class", "something")
       .attr("d", path)
 	  .style("stroke",  "#51A5BA")
-      .on("click", clicked).style("fill", function(states){
-	  
-	  //if everything is loaded and it's time for an update
-	  if(yes === true){
-		var state_name = ANSI_state[states.id];
-		var state_object = blah[state_name];
-	
-		
-			if(typeof(state_object["color"]) === "undefined"){
-			return "red"
-			}
-			else {
-			console.log(state_object["color"]);
-			return state_object["color"];
-			}
-		}
-		else {
-			return "#87E293";
-		}
-		
-	})
+      .on("click", clicked).style("fill","#87E293")
 	;
-;
+
 
   g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -261,7 +238,11 @@ var state_object = states[state_name];
 
 var state_pop = states[state_name]["population"];
 var state_infected = states[state_name]["newInfected"] + states[state_name]["oldInfected"];
-var percent_infected = state_infected / state_pop;
+
+var pop = parseInt(state_pop);
+var inf = parseInt(state_infected);
+
+var percent_infected = inf / pop;
 if(percent_infected == NaN){
 	percent_infected = 0;
 }
