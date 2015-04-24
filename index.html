@@ -196,23 +196,39 @@ var g = svg.append("g");
 var usdaAtlas;
 
 // kept for later use involving the color changing based on infection
-var populationScale = d3.scale.linear().domain([-5, 0, 5]).range(["#d8b365", "#f5f5f5", "#5ab4ac"]);
+var populationScale = d3.scale.linear().domain([0, 0, 1]).range(["#d8b365", "#f5f5f5", "#5ab4ac"]);
+
+drawmap();
+
+function drawmap(){
 
 d3.json("us.json", function(error, us) {
 g.append("g")
-      .attr("id", "states")
+      .attr("id", "states1")
     .selectAll("path")
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path")
       .attr("d", path)
-      .on("click", clicked);
+      .on("click", clicked).style("fill", function(states1){
+			
+
+		if(states1.id == 36){
+			return "pink";
+		}
+		else {
+			return "#87E293";
+		}
+		
+	})
+	;
+;
 
   g.append("path")
       .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
       .attr("id", "state-borders")
       .attr("d", path);
 	});
-	
+	};
 	
 	// The id from click represents the ANSI code of the state.
 	// Right here I initialize an array of states, in the order they
@@ -239,18 +255,14 @@ if(percent_infected == NaN){
 		hi.innerHTML = hi.innerHTML + "Number Infected:  <b> " + state_infected +"</b><br> <br>";
 		hi.innerHTML = hi.innerHTML + "Percent Sick:  <b> " + percent_infected + "</b> %";
 
-  var x, y, k;
+
 
   if (d && centered !== d) {
     var centroid = path.centroid(d);
-    x = centroid[0];
-    y = centroid[1];
-    k = 4;
+ 
     centered = d;
   } else {
-    x = width / 2;
-    y = height / 2;
-    k = 1;
+
     centered = null;
   }
 
@@ -477,7 +489,6 @@ if(percent_infected == NaN){
 
 
 
-//----- Blog functions end here.
 
 
 
