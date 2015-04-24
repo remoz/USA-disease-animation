@@ -16,7 +16,7 @@ body { background-color: #51A5BA}
 #intro{
 	font-family: 'Lato', sans-serif;
 	font-weight: 300;
-	font-size: 19px;
+	font-size: 25px;
 	color: white;
 	width: 100%;
 	margin: -10px 0px 60px -10px;
@@ -28,38 +28,42 @@ body { background-color: #51A5BA}
 	box-shadow: 0px 0px 10px 0px #202020;
 
 }
-
-.loader {
-	position: fixed;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 9999;
-	background: url('https://33.media.tumblr.com/bec5933eea5043acf6a37bb1394384ab/tumblr_mj0xxeyLhy1s7or0ro1_400.gif') 50% 50% no-repeat;
+#information_reader{
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+	font-size: 14px;
+	color: white;
+	width: 250px;
+	float: right;
+	background: #404040;
+	margin: -350px 0px 0px -30px;
+	height: 200px;
+	box-shadow: 0px 0px 10px 0px #202020;
 }
 </style>
 </head>
 <body>
 
-<div id="intro"> Info 3300: Disease and 'Murika</div>
+<div id="intro"> Info 3300: 28 Days Later (Disease in America)</div>
 <br> <br> <br>
 
 <div class="loader"></div>
 <div id="map"></div>
+<div id="information_reader"> Things will Go Here!</div>
 <select id="diseasechoice">
   <option value="18">Measles</option>
   <option value="10">Mumps</option>
   <option value="4">AIDS</option>
   <option value="4">SARS</option>
     <option value="2">Ebola</option>
+	<option value="100"> Zombie Outbreak </option>
 </select>
 
 <button type="button" id="set">Set Map!</button>
 <button type="button" id="sample">Then Click Me!</button>
 
 <div id="feedback">
-
+Page is still loading~
 </div>
 
 <script>
@@ -83,6 +87,10 @@ d3.select("#set").on("click", function () {
 		 if(projection([longitude, latitude]) != null ){
 		svg.append("circle").attr("r",1).attr("fill", "black").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
 		}
+		
+		var hi = document.getElementById("feedback");
+		hi.innerHTML = "Airports added to map!";
+		hi.innerHTML = hi.innerHTML + " <br> Spread rate added!";
 	};
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
@@ -223,6 +231,10 @@ d3.json("us.json", function(error, shapes) {
 				// total infected is newInfected + oldInfected
 				color: 'ffffff'};
 		})
+		
+		var hi = document.getElementById("feedback");
+		hi.innerHTML = hi.innerHTML + "... ~";
+	
 	});
 
 	function randomState() {
@@ -265,6 +277,9 @@ d3.json("us.json", function(error, shapes) {
 					longitude: a.Longitude};
 			}
 		});
+		
+		var hi = document.getElementById("feedback");
+		hi.innerHTML = hi.innerHTML + "... ~";
 	});
 
 
@@ -303,8 +318,8 @@ d3.json("us.json", function(error, shapes) {
 				flights[(d-1)].push(flyer);
 			};
 		
-		// Add code to take away loading gif
-			$(".loader").fadeOut("slow");
+	var hi = document.getElementById("feedback");
+		hi.innerHTML = "FINISHED LOADING!";
 		};
 	});
 	
