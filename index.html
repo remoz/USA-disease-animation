@@ -411,9 +411,7 @@ if(percent_infected == NaN){
 
 		while (day.length > 0)
    		arrays.push(day.splice(0, size));
-   		console.log('this is arrays length: '+arrays.length)
    		arrays.forEach(function(flights) {
-   			console.log('launching chunk no: ' + count)
 			callback2(flights,0);
 			count += 1
 		});
@@ -423,7 +421,6 @@ if(percent_infected == NaN){
 
 
 	function flightsPerChunk(chunk,no) {
-		console.log('heres the number in the chunk: ' + no)
 		flight = chunk[no];
 		if (flight === undefined) {return;}
 		//chunk.forEach(function(flight) {
