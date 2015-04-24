@@ -12,7 +12,7 @@
 	<script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
 <style>
-body { background-color: #51A5BA}
+body { background-color: #51A5BA;}
 #intro{
 	font-family: 'Lato', sans-serif;
 	font-weight: 300;
@@ -238,11 +238,10 @@ var state_object = states[state_name];
 var state_pop = states[state_name]["population"];
 var state_infected = states[state_name]["newInfected"] + states[state_name]["oldInfected"];
 
-// convert the numbers using parsefloat just in case they're strings
-var state_pop = parseFloat(state_pop);
-var state_infected = parseFloat(state_infected);
+var pop = parseInt(state_pop);
+var inf = parseInt(state_infected);
 
-var percent_infected = state_infected / state_pop;
+var percent_infected = inf / pop;
 if(percent_infected == NaN){
 	percent_infected = 0;
 }
