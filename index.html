@@ -3,9 +3,10 @@
 
 <head>
 
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,900' rel='stylesheet' type='text/css'>
 	
+	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 	<!-- Load the d3 library. -->
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
@@ -13,15 +14,38 @@
 <style>
 body { background-color: #51A5BA}
 #intro{
-		background-color: 
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+	font-size: 19px;
+	color: white;
+	width: 100%;
+	margin: -10px 0px 60px -10px;
+	padding: 10px 10px 0px 10px;
+	background: #404040;
+	position: fixed;    
+	z-index: 1; 
+	height: 50px;
+	box-shadow: 0px 0px 10px 0px #202020;
+
+}
+
+.loader {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('http://www.blackbox.sa.com/app/webroot/img/loading.gif') 50% 50% no-repeat;
 }
 </style>
 </head>
 <body>
 
 <div id="intro"> Info 3300: Disease and 'Murika</div>
+<br> <br> <br>
 
-
+<div class="loader"></div>
 <div id="map"></div>
 <select id="diseasechoice">
   <option value="18">Measles</option>
@@ -275,6 +299,9 @@ d3.json("us.json", function(error, shapes) {
 			if (isValidLoc(flyer)) {
 				flights[(d-1)].push(flyer);
 			};
+		
+		// Add code to take away loading gif
+			$(".loader").fadeOut("slow");
 		};
 	});
 	
