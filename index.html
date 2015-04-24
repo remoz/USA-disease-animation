@@ -322,7 +322,7 @@ var state_infected = states[state_name]["newInfected"] + states[state_name]["old
 var pop = parseInt(state_pop);
 var inf = parseInt(state_infected);
 
-var percent_infected = inf / pop;
+var percent_infected = inf / pop * 100;
 var percent_infected = percent_infected.toFixed(2);
 
 var fullname = state_fullnames[state_name];
