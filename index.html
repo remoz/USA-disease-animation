@@ -114,59 +114,8 @@ d3.select("#sample").on("click", function () {
 		states[randomState()].newInfected = states[randomState()].newInfected + 1;
 	}
 
-	// ################################
-	// ##### UPDATE STATE COLORS ######
-	// ################################
-
+	flightsPerDay(flights[0],0,unloadPlane);
 	
-	flights.forEach(function(day) {
-		var counter = 0;
-		day.forEach(function(flight) {
-			console.log('flight #: ' + counter);
-
-			srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
-			destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
-			animateFlight(srcCoords, destCoords);
-			console.log('animated flight');
-			fly(airports[flight.src],airports[flight.dest]);
-			counter += 1;
-		});
-		// Collect and display dest airport's spread Ratio
-		for (airport in airports) {
-			var a = airports[airport]
-			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
-			// ##############################################
-			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
-			// ##############################################
-
-			// Get people off planes into states
-			
-			states[a.state].population += a.incoming
-			a.incoming = 0
-			states[a.state].newInfected += a.newInfected
-			a.newInfected = 0
-			states[a.state].oldinfected += a.oldInfected
-			a.oldInfected = 0
-		}
-		// ################################
-		// ##### UPDATE STATE COLORS ######
-		// ################################
-
-		// Now take time to dissipate and spread disease
-		for (state in states) {
-			var s = states[state];
-			s.oldInfected += s.newInfected
-			s.newInfected = r0*s.newInfected
-		}
-		// ################################
-		// ##### UPDATE STATE COLORS ######
-		// ################################
-
-	// ##############################################
-	// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
-	// ##############################################
-	
-	});
 	
 });
 // USA Map work, using help from 0225 notes
@@ -260,6 +209,7 @@ d3.json("us.json", function(error, shapes) {
 	}*/
 	var airports = {};
 	var flights = [];
+	var flightsCSV = [];
 	d3.csv("airports.csv", function(data) {
 		airportsCSV = data;
 		airportsCSV.forEach(function(a) {
@@ -289,7 +239,7 @@ d3.json("us.json", function(error, shapes) {
 				if (f.Cancelled === 1) {
 					continue;
 				}
-				if (i > 2000) {break;}
+				
 				m = parseInt(f.Month);
 				if (m === 2) {
 					continue;
@@ -313,7 +263,7 @@ d3.json("us.json", function(error, shapes) {
 
 	
 	// FLIGHT STUFF
-	var flightsCSV = [];
+	
 	/*flights = [
 		[{src: SRC, dest: DEST}, ...],	day 1
 		[{src: SRC, dest: DEST}, ...],	day 2
@@ -322,7 +272,51 @@ d3.json("us.json", function(error, shapes) {
 	Day 1 is flights[0]
 	}*/
 	
-	
+	function flightsPerDay(day, dayno,callback) {
+		console.log('fligthsperDay');
+		console.log(dayno);
+		if (dayno == 28) {return;}
+		day.forEach(function(flight) {
+			srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
+			destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
+			animateFlight(srcCoords, destCoords);
+			fly(airports[flight.src],airports[flight.dest]);
+			callback(dayno,spreadDisease);
+		});
+	}
+
+	function unloadPlane(dayno,callback) {
+		console.log('unloading')
+		for (airport in airports) {
+			var a = airports[airport]
+			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
+			// ##############################################
+			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
+			// ##############################################
+
+			// Get people off planes into states
+			
+			states[a.state].population += a.incoming
+			a.incoming = 0
+			states[a.state].newInfected += a.newInfected
+			a.newInfected = 0
+			states[a.state].oldinfected += a.oldInfected
+			a.oldInfected = 0
+		}
+		callback(dayno,flightsPerDay);
+	}
+
+	function spreadDisease(dayno,callback) {
+		console.log('spreading')
+		for (state in states) {
+			var s = states[state];
+			s.oldInfected += s.newInfected
+			s.newInfected = r0*s.newInfected
+		}
+		callback(flights[dayno],dayno+1,unloadPlane);
+	}
+
+
 	//What will be used to display the airplanes flying from airport to airport
 	function animateFlight(srcCoords, destCoords){
 	var route = svg.append("path")
@@ -340,7 +334,7 @@ d3.json("us.json", function(error, shapes) {
 	function transition(plane, route) {
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 300)
+        .duration(l * 200)
         .attrTween("transform", delta(plane, route.node()))
         .each("end", function() { route.remove(); })
         .remove();
