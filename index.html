@@ -263,10 +263,11 @@ d3.json("us.json", function(error, shapes) {
 		}
 	}*/
 	var airports = {};
+	var flights = [];
 	d3.csv("airports.csv", function(data) {
 		airportsCSV = data;
 		airportsCSV.forEach(function(a) {
-			if (a.State in states) {
+			if (a.State in states && projection([a.Longitude,a.Latitude])!= null) {
 				airports[a.IATA] = {
 					state: a.State, 
 					incoming: 0, 
@@ -280,6 +281,35 @@ d3.json("us.json", function(error, shapes) {
 		
 		var hi = document.getElementById("feedback");
 		hi.innerHTML = hi.innerHTML + "... ~";
+
+		
+		for (var i = 0; i < 28; i++) {
+			flights[i] = [];
+		};
+		d3.csv("2008flights.csv", function(data) {
+			flightsCSV = data;
+			for (var i = 0; i < flightsCSV.length; i++) {
+				f = flightsCSV[i]
+				if (f.Cancelled === 1) {
+					continue;
+				}
+				m = parseInt(f.Month);
+				if (m === 2) {
+					continue;
+				}
+				d = parseInt(f.DayofMonth);
+				flyer = {
+					src: f.Origin,
+					dest: f.Dest,
+				}
+				if (flyer.src in airports && flyer.dest in airports) {
+				flights[(d-1)].push(flyer);
+				};
+			
+		var hi = document.getElementById("feedback");
+			hi.innerHTML = "FINISHED LOADING!";
+			};
+	});
 	});
 
 
@@ -294,34 +324,7 @@ d3.json("us.json", function(error, shapes) {
 	Flights only contains one month's worth of data. 
 	Day 1 is flights[0]
 	}*/
-	var flights = [];
-	for (var i = 0; i < 31; i++) {
-		flights[i] = [];
-	};
-	d3.csv("2008flights.csv", function(data) {
-		flightsCSV = data;
-		for (var i = 0; i < flightsCSV.length; i++) {
-			f = flightsCSV[i]
-			if (f.Cancelled === 1) {
-				continue;
-			}
-			m = parseInt(f.Month);
-			if (m === 2) {
-				continue;
-			}
-			d = parseInt(f.DayofMonth);
-			flyer = {
-				src: f.Origin,
-				dest: f.Dest,
-			}
-			if (isValidLoc(flyer)) {
-				flights[(d-1)].push(flyer);
-			};
-		
-	var hi = document.getElementById("feedback");
-		hi.innerHTML = "FINISHED LOADING!";
-		};
-	});
+	
 	
 	//What will be used to display the airplanes flying from airport to airport
 	function animateFlight(srcCoords, destCoords){
@@ -340,7 +343,7 @@ d3.json("us.json", function(error, shapes) {
 	function transition(plane, route) {
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 50)
+        .duration(l * 300)
         .attrTween("transform", delta(plane, route.node()))
         .each("end", function() { route.remove(); })
         .remove();
@@ -368,35 +371,11 @@ d3.json("us.json", function(error, shapes) {
   }
 	
 //------------
-// Functions from a blog to be used to display airplane movement
-function transition(plane, route) {
-  var l = route.node().getTotalLength();
-  plane.transition()
-       .duration(5000)
-       .attrTween("transform", delta(route.node()));
-}
-  
-function delta(path) {
-  var l = path.getTotalLength();
-  return function(i) {
-    return function(t) {
-      var p = path.getPointAtLength(t * l);
-      return "translate(" + p.x + "," + p.y + ")";
-    }
-  }
-}
+
 
 //----- Blog functions end here.
 
 
-
-	// Checks to see if its source and destination
-	// airports are valid locations on the projection
-	function isValidLoc(flight) {
-		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
-		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
-		return (projection(srcCoords) != null) && (projection(destCoords) != null);
-	}
 
 	// Assume 100 people on each flight
 	// src and dest are objects in airport
