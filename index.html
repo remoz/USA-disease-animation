@@ -285,8 +285,10 @@ if(percent_infected == NaN){
 	d3.csv("2008StatePop.csv", function(data) {
 		statesCSV = data;
 		statesCSV.forEach(function(s) {
+			var pop = s.Population
+			pop = pop.replace(/,/g , '');
 			states[s.Name] = {
-				population: s.Population, 
+				population: parseInt(pop), 
 				newInfected: 0,
 				oldInfected: 0,
 				// total infected is newInfected + oldInfected
@@ -356,7 +358,8 @@ if(percent_infected == NaN){
 				if (f.Cancelled === 1) {
 					continue;
 				}
-				if (i > 19000) {return;}
+				if (i < 1900 ) {continue;}
+				if (i === 1902) {break;}
 				d = parseInt(f.DayofMonth);
 				flyer = {
 					src: f.Origin,
@@ -385,34 +388,41 @@ if(percent_infected == NaN){
 	Day 1 is flights[0]
 	}*/
 	count = 0;
+	animatedNo = 0;
+	dayAmt = 0;
 	function flightsPerDay(day,dayno,callback1,callback2) {
+		console.log('beginning day uno')
 		if (dayno === 28) {return;}
-		counter = 0
-		var arrays = [], size = 10;
-
+		var arrays = [], size = 100;
+		dayAmt = day.length;
+		console.log("heres nno of flights in total day: " + dayAmt);
 		while (day.length > 0)
    		arrays.push(day.splice(0, size));
    		arrays.forEach(function(flights) {
-			callback2(flights,0);
+   			//console.log('launching chunk : ' + count)
+			callback2(flights,0,dayno);
 			count += 1
 		});
-		//callback1(dayno,spreadDisease);
 		console.log('done with first dayyy')
+		//callback1(dayno,spreadDisease);
+		
 	}
 
 
-	function flightsPerChunk(chunk,no) {
+	function flightsPerChunk(chunk,no,dayno) {
 		flight = chunk[no];
 		if (flight === undefined) {return;}
 		//chunk.forEach(function(flight) {
 		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
 		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
-		animateFlight(srcCoords, destCoords,chunk,no);
-		//fly(airports[flight.src],airports[flight.dest]);
+		fly(airports[flight.src],airports[flight.dest]);
+		animateFlight(srcCoords, destCoords,chunk,no,dayno);
+		
 		//});
 	}
 
-	function unloadPlane(dayno,callback) {
+	function unloadPlane(dayno) {
+		console.log('should only be printed once')
 		for (airport in airports) {
 			var a = airports[airport]
 			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
@@ -426,24 +436,29 @@ if(percent_infected == NaN){
 			a.incoming = 0
 			states[a.state].newInfected += a.newInfected
 			a.newInfected = 0
-			states[a.state].oldinfected += a.oldInfected
+			states[a.state].oldInfected += a.oldInfected
 			a.oldInfected = 0
 		}
 		//callback(dayno,flightsPerDay);
+		spreadDisease();
 	}
-
-	function spreadDisease(dayno,callback) {
+	function spreadDisease() {
+	//function spreadDisease(dayno,callback) {
+		console.log('spreading')
 		for (state in states) {
 			var s = states[state];
 			s.oldInfected += s.newInfected
-			s.newInfected = r0*s.newInfected
+			potNew = r0*s.newInfected
+			if (potNew > s.population) {potNew = s.population-s.oldInfected}
+			s.newInfected = potNew
 		}
 		//callback(flights[dayno],dayno+1,unloadPlane,flightsPerChunk);
 	}
 
 
 	//What will be used to display the airplanes flying from airport to airport
-	function animateFlight(srcCoords, destCoords,chunk,no){
+	function animateFlight(srcCoords, destCoords,chunk,no,dayno){
+		console.log('animate anytime')
 	var route = svg.append("path")
                .datum({type: "LineString", coordinates: [srcCoords, destCoords]})
                .attr("class", "route")
@@ -455,16 +470,28 @@ if(percent_infected == NaN){
     plane.style('opacity',1).style('fill','white');
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 25)
+        .duration(l * 100)
         .attrTween("transform", delta(route.node()))
         .each("end", function() { 
         	route.remove(); 
-        	flightsPerChunk(chunk,no+1)
+        	animatedNo += 1
+        	if (animatedNo === dayAmt) {
+        		console.log('is it done?')
+        		animatedNo = 0;
+        		unloadPlane(dayno);
+        		
+        	} else {
+        		/*console.log('this is # of animated planes: ' + animatedNo);
+        		console.log('day amount' + dayAmt)*/
+        		flightsPerChunk(chunk,no+1)
+
+        	}
         })
         .remove();
 	}
   
-  function delta(path) {    var l = path.getTotalLength();
+  function delta(path) {    
+  	var l = path.getTotalLength();
 
     return function(i) {
     	return function(t) {
@@ -495,9 +522,12 @@ if(percent_infected == NaN){
 		// Get people on plane and to dest airport
 		newInfectedProb = states[src.state].newInfected/states[src.state].population
 		oldInfectedProb = states[src.state].oldInfected/states[src.state].population
-		for (var i = 0; i < 100; i++) {
+		console.log(states[src.state].population)
+		infected = 0;
+		for (var i = 0; i < 10; i++) {
 			r = Math.random();
 			if (r < newInfectedProb && states[src.state].newInfected > 0) {
+				infected += 1
 				dest.newInfected += 1
 				states[src.state].newInfected -= 1
 			} else if (r < newInfectedProb + oldInfectedProb) {
@@ -507,6 +537,7 @@ if(percent_infected == NaN){
 			dest.incoming += 1
 			states[src.state].population -= 1
 		}
+		console.log(infected + ' that was how many you wanted')
 		
 
 	};
