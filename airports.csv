@@ -32,7 +32,6 @@ IATA,Airport,City,State,Country,Latitude,Longitude
 09J,Jekyll Island,Jekyll Island,GA,USA,31.07447222,-81.42777778
 09K,Sargent Municipal,Sargent,NE,USA,41.63695083,-99.34038139
 09M,Charleston Municipal,Charleston,MS,USA,33.99150222,-90.078145
-09W,South Capitol Street,Washington,DC,USA,38.86872333,-77.00747583
 0A3,Smithville Municipal,Smithville,TN,USA,35.98531194,-85.80931806
 0A8,Bibb County,Centreville,AL,USA,32.93679056,-87.08888306
 0A9,Elizabethton Municipal,Elizabethton,TN,USA,36.37094306,-82.17374111
@@ -760,7 +759,6 @@ AAS,Taylor County,Cambellsville,KY,USA,37.35827778,-85.30941667
 AAT,Alturas Municipal,Alturas,CA,USA,41.483,-120.5653611
 ABE,Lehigh Valley International,Allentown,PA,USA,40.65236278,-75.44040167
 ABI,Abilene Regional,Abilene,TX,USA,32.41132,-99.68189722
-ABO,Antonio (Nery) Juarbe Pol,Arecibo,PR,USA,18.45111111,-66.67555556
 ABQ,Albuquerque International,Albuquerque,NM,USA,35.04022222,-106.6091944
 ABR,Aberdeen Regional,Aberdeen,SD,USA,45.44905556,-98.42183333
 ABY,Southwest Georgia Regional,Albany,GA,USA,31.535515,-84.19447333
@@ -998,7 +996,6 @@ BPI,Big Piney-Marbleton,Big Piney,WY,USA,42.58506972,-110.1111531
 BPK,Baxter County Regional,Mountain Home,AR,USA,36.36894194,-92.47052806
 BPT,Southeast Texas Regional,Beaumont/Port Arthur,TX,USA,29.95083333,-94.02069444
 BQK,Glynco Jetport,Brunswick,GA,USA,31.25902778,-81.46630556
-BQN,Rafael Hernandez,Aguadilla,PR,USA,18.49486111,-67.12944444
 BRD,Brainerd-Crow Wing County Regional,Brainerd,MN,USA,46.39785806,-94.1372275
 BRL,Burlington Municipal,Burlington,IA,USA,40.783225,-91.12550556
 BRO,Brownsville/S.Padre Island International,Brownsville,TX,USA,25.90683333,-97.42586111
@@ -1173,7 +1170,6 @@ CPK,Chesapeake Municipal,Norfolk,VA,USA,36.66561833,-76.32066389
 CPM,Compton/Woodley,Compton,CA,USA,33.89001611,-118.2436831
 CPR,Natrona County Intl,Casper,WY,USA,42.90835556,-106.4644661
 CPS,St. Louis Downtown,Cahokia/St. Louis,IL,USA,38.57072444,-90.15622111
-CPX,Benjamin Rivera Noriega,Isla De Culebra,PR,USA,18.31328917,-65.30432444
 CQA,Lakefield,Celina,OH,USA,40.48408333,-84.56011111
 CQB,Chandler Municipal,Chandler,OK,USA,35.72381556,-96.82027306
 CQX,Chatham Municipal,Chatham,MA,USA,41.68840028,-69.98952417
@@ -2197,7 +2193,6 @@ MAI,Marianna Municipal,Marianna,FL,USA,30.83780556,-85.18188889
 MAL,Malone-Dufort,Malone,NY,USA,44.85365722,-74.32894972
 MAO,Marion County,Marion,SC,USA,34.18116667,-79.33472222
 MAW,Malden Municipal,Malden,MO,USA,36.60055694,-89.99220278
-MAZ,Eugenio Maria De Hostos,Mayaguez,PR,USA,18.25569444,-67.14847222
 MBG,Mobridge Municipal,Mobridge,SD,USA,45.54650361,-100.4079192
 MBL,Manistee County Blacker,Manistee,MI,USA,44.27319722,-86.2490025
 MBO,Bruce Campbell ,Madison,MS,USA,32.43866444,-90.10309222
