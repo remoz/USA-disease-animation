@@ -273,8 +273,8 @@ d3.json("us.json", function(error, shapes) {
 	// FLIGHT STUFF
 	var flightsCSV = [];
 	/*flights = [
-		[{src: SRC, dest: DEST, dist: 0}, ...],	day 1
-		[{src: SRC, dest: DEST, dist: 0}, ...],	day 2
+		[{src: SRC, dest: DEST}, ...],	day 1
+		[{src: SRC, dest: DEST}, ...],	day 2
 	]
 	Flights only contains one month's worth of data. 
 	Day 1 is flights[0]
@@ -298,7 +298,6 @@ d3.json("us.json", function(error, shapes) {
 			flyer = {
 				src: f.Origin,
 				dest: f.Dest,
-				dist: f.Distance
 			}
 			if (isValidLoc(flyer)) {
 				flights[(d-1)].push(flyer);
