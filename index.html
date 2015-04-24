@@ -56,6 +56,11 @@ body { background-color: #51A5BA;}
 	padding: 10px 10px 0px 10px;
 
 }
+#feedback{
+	font-family: 'Lato', sans-serif;
+	font-size: 10px;
+}
+
 #othercoolfont{
 padding: 0px 30px 0px 0px;
 float: left;
@@ -104,17 +109,37 @@ color: #FE8402
   opacity: 0.7;
 }
 
+.loader {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('https://d13yacurqjgara.cloudfront.net/users/121337/screenshots/916951/small-load.gif') 50% 50% no-repeat #15191F;
+}
 
-
+#hideplane{
+	width: 30px;
+	height: 30px;
+	background-color: #51A5BA;
+	position: fixed;
+	
+}
 </style>
 </head>
 <body>
 
+
+<div class="loader"></div>
+
+
+
 <div id="intro"> <div id="coolfont">Info 3300</div> <div id="othercoolfont"> <h2> 28 Days Later (Disease in America)</h2> </div></div>
 <br> <br> <br>
 
-
-
+<br> <br> <br> <br>
+<div id="hideplane"> </div>
 
 
 <div id="map"></div>
@@ -138,16 +163,16 @@ color: #FE8402
  Flight Animation Speed<br>
 fast <input type="range" id="myrange" min="1" max="500"> slow
 <br> <br> 
-<button type="button" id="set">Set Map!</button>
-<br> <br>
+<button type="button" id="set">Set Map!</button> <div id="feedback">
+
+</div>
+<br> 
 <button type="button" id="sample">Start Animation!</button> <br> <br>
 
 ---------------------------------------
 </div>
 
-<div id="feedback">
-Page is still loading~
-</div>
+
 
 <script>
 
@@ -217,8 +242,8 @@ d3.select("#set").on("click", function () {
 		var speed = document.getElementById("myrange").value;
 		var hi = document.getElementById("feedback");
 	
-		hi.innerHTML = "Spread rate added!";
-		hi.innerHTML= hi.innerHTML + "<br> New speed added. (" + speed + ")";
+		hi.innerHTML = "Settings have been stored!";
+		
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
 
@@ -285,7 +310,7 @@ var usdaAtlas;
 // kept for later use involving the color changing based on infection
 
 
-console.log(states);
+
 drawmap(states, false);
 
 function drawmap(blah, yes){
@@ -376,8 +401,7 @@ var fullname = state_fullnames[state_name];
 				color: 'ffffff'};
 		})
 		
-		var hi = document.getElementById("feedback");
-		hi.innerHTML = hi.innerHTML + "... ~";
+		
 	
 	});
 
@@ -424,8 +448,7 @@ var fullname = state_fullnames[state_name];
 			}
 		});
 		
-		var hi = document.getElementById("feedback");
-		hi.innerHTML = hi.innerHTML + "... ~";
+
 
 		
 		for (var i = 0; i < 28; i++) {
@@ -450,8 +473,7 @@ var fullname = state_fullnames[state_name];
 				flights[(d-1)].push(flyer);
 				};
 			
-		var hi = document.getElementById("feedback");
-			hi.innerHTML = "FINISHED LOADING!";
+					$(".loader").fadeOut("slow");
 			};
 	});
 	});
