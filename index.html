@@ -13,6 +13,8 @@
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
 <style>
 body { background-color: #51A5BA;}
+
+
 #intro{
 	font-family: 'Lato', sans-serif;
 	font-weight: 300;
@@ -27,6 +29,19 @@ body { background-color: #51A5BA;}
 	height: 50px;
 	box-shadow: 0px 0px 10px 0px #202020;
 
+}
+
+#controls{
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+	font-size: 14px;
+	color: white;
+	width: 250px;
+	float: right;
+	background: #404040;
+	margin: -480px 0px 0px -30px;
+	height: 250px;
+	padding: 10px 10px 0px 10px;
 }
 #information_reader{
 	font-family: 'Lato', sans-serif;
@@ -52,12 +67,14 @@ margin: 0px 20px 0px 0px;
 }
 
 h2{
+font-size: 20px;
 font-family: 'Lato', sans-serif;
 color: #FE8402;
 margin: 0px;
 }
 h3{
 font-family: 'Lato', sans-serif;
+
 color: #FE8402
 
 }
@@ -86,6 +103,9 @@ color: #FE8402
   pointer-events: none;
   opacity: 0.7;
 }
+
+
+
 </style>
 </head>
 <body>
@@ -93,12 +113,18 @@ color: #FE8402
 <div id="intro"> <div id="coolfont">Info 3300</div> <div id="othercoolfont"> <h2> 28 Days Later (Disease in America)</h2> </div></div>
 <br> <br> <br>
 
-<div class="loader"></div>
+
+
+
 
 <div id="map"></div>
 
-<div id="information_reader"> <h3>State Information: </h3><br> Click on a state to learn more about how the disease is affecting it. </div>
+<div id="information_reader"> <br> <h3>State Information: </h3> Click on a state to learn more about how the disease is affecting it. </div>
 
+
+
+<div id="controls">
+<h3> Controls </h3>
 
 <select id="diseasechoice">
   <option value="18">Measles</option>
@@ -108,9 +134,16 @@ color: #FE8402
     <option value="2">Ebola</option>
 	<option value="100"> Zombie Outbreak </option>
 </select>
-
+ <br> <br>
+ Flight Animation Speed<br>
+fast <input type="range" id="myrange" min="1" max="500"> slow
+<br> <br> 
 <button type="button" id="set">Set Map!</button>
-<button type="button" id="sample">Then Click Me!</button>
+<br> <br>
+<button type="button" id="sample">Start Animation!</button> <br> <br>
+
+---------------------------------------
+</div>
 
 <div id="feedback">
 Page is still loading~
@@ -122,30 +155,87 @@ Page is still loading~
 
 // r0 = # of ppl one sick person will infect on average
 var r0s = {Measles: 18, Mumps: 10, AIDS: 4, SARS: 4, Ebola: 2}
+
 var r0 = 18;
 
-
-// Click button to set Map
-//Append airports and also set colorings/ Ro for the trial
+var state_fullnames = {
+            'AL':'Alabama',
+            'AK':'Alaska',
+            'AZ':'Arizona',
+            'AR':'Arkansas',
+            'CA':'California',
+            'CO':'Colorado',
+            'CT':'Connecticut',
+            'DE':'Delaware',
+            'DC':'District Of Columbia',
+            'FL':'Florida',
+            'GA':'Georgia',
+            'HI':'Hawaii',
+            'ID':'Idaho',
+            'IL':'Illinois',
+            'IN':'Indiana',
+            'IA':'Iowa',
+            'KS':'Kansas',
+            'KY':'Kentucky',
+            'LA':'Louisiana',
+            'ME':'Maine',
+            'MD':'Maryland',
+            'MA':'Massachusetts',
+            'MI':'Michigan',
+            'MN':'Minnesota',
+            'MS':'Mississippi',
+            'MO':'Missouri',
+            'MT':'Montana',
+            'NE':'Nebraska',
+            'NV':'Nevada',
+            'NH':'New Hampshire',
+            'NJ':'New Jersey',
+            'NM':'New Mexico',
+            'NY':'New York',
+            'NC':'North Carolina',
+            'ND':'North Dakota',
+            'OH':'Ohio',
+            'OK':'Oklahoma',
+            'OR':'Oregon',
+            'PA':'Pennsylvania',
+            'RI':'Rhode Island',
+            'SC':'South Carolina',
+            'SD':'South Dakota',
+            'TN':'Tennessee',
+            'TX':'Texas',
+            'UT':'Utah',
+            'VT':'Vermont',
+            'VA':'Virginia',
+            'WA':'Washington',
+            'WV':'West Virginia',
+            'WI':'Wisconsin',
+            'WY':'Wyoming',
+        };
+// Click button to colorings/ Ro / speed for the trial
 d3.select("#set").on("click", function () {
 
+		var speed = document.getElementById("myrange").value;
 		var hi = document.getElementById("feedback");
 	
 		hi.innerHTML = "Spread rate added!";
-
+		hi.innerHTML= hi.innerHTML + "<br> New speed added. (" + speed + ")";
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
 
 	
 	r0 = parseInt( selectedValue);
+
+	
 	return r0;
 	
-
 });
+
 
 
 // Click button to start trial
 d3.select("#sample").on("click", function () {
+
+var speed = document.getElementById("myrange").value;
 
 	// Disease spread is equal to r0 for each new infective
 	// Old infectives no longer infect other people
@@ -233,12 +323,13 @@ var pop = parseInt(state_pop);
 var inf = parseInt(state_infected);
 
 var percent_infected = inf / pop;
-if(percent_infected == NaN){
-	percent_infected = 0;
-}
+var percent_infected = percent_infected.toFixed(2);
+
+var fullname = state_fullnames[state_name];
+
 //Updates the information reader to show information about the state
 		var hi = document.getElementById("information_reader");
-		hi.innerHTML = " <h3>State Information: </h3><br>";
+		hi.innerHTML = "<br> <h3>"+ fullname +"  ( " + state_name + ") </h3>";
 		hi.innerHTML = hi.innerHTML + "State Population:   <b>" + state_pop + "</b><br><br>";
 		hi.innerHTML = hi.innerHTML + "Number Infected:  <b> " + state_infected +"</b><br> <br>";
 		hi.innerHTML = hi.innerHTML + "Percent Sick:  <b> " + percent_infected + "</b> %";
