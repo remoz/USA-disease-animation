@@ -29,15 +29,6 @@ body { background-color: #51A5BA}
 
 }
 
-.loader {
-	position: fixed;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 9999;
-	background: url('https://33.media.tumblr.com/bec5933eea5043acf6a37bb1394384ab/tumblr_mj0xxeyLhy1s7or0ro1_400.gif') 50% 50% no-repeat;
-}
 </style>
 </head>
 <body>
@@ -60,7 +51,7 @@ body { background-color: #51A5BA}
 <button type="button" id="sample">Then Click Me!</button>
 
 <div id="feedback">
-
+Page is still loading~
 </div>
 
 <script>
@@ -83,6 +74,10 @@ d3.select("#set").on("click", function () {
 		 if(projection([longitude, latitude]) != null ){
 		svg.append("circle").attr("r",1).attr("fill", "black").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
 		}
+		
+		var hi = document.getElementById("feedback");
+		hi.innerHTML = "Airports added to map!";
+		hi.innerHTML = hi.innerHTML + " <br> Spread rate added!";
 	};
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
@@ -222,6 +217,10 @@ d3.json("us.json", function(error, shapes) {
 				// total infected is newInfected + oldInfected
 				color: 'ffffff'};
 		})
+		
+		var hi = document.getElementById("feedback");
+		hi.innerHTML = hi.innerHTML + "... ~";
+	
 	});
 
 	function randomState() {
@@ -262,6 +261,9 @@ d3.json("us.json", function(error, shapes) {
 				latitude: a.Latitude, 
 				longitude: a.Longitude};
 		});
+		
+		var hi = document.getElementById("feedback");
+		hi.innerHTML = hi.innerHTML + "... ~";
 	});
 
 
@@ -301,8 +303,8 @@ d3.json("us.json", function(error, shapes) {
 				flights[(d-1)].push(flyer);
 			};
 		
-		// Add code to take away loading gif
-			$(".loader").fadeOut("slow");
+	var hi = document.getElementById("feedback");
+		hi.innerHTML = "FINISHED LOADING!";
 		};
 	});
 	
