@@ -120,15 +120,17 @@ d3.select("#sample").on("click", function () {
 
 	
 	flights.forEach(function(day) {
+		var counter = 0;
 		day.forEach(function(flight) {
-			// ############################
-			// ##### ANIMATE FLIGHT  ######
-			// ############################
+			console.log('flight #: ' + counter);
 
 			srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
 			destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
 			animateFlight(srcCoords, destCoords);
+			console.log('animated flight');
 			fly(airports[flight.src],airports[flight.dest]);
+			counter += 1;
+		});
 		// Collect and display dest airport's spread Ratio
 		for (airport in airports) {
 			var a = airports[airport]
@@ -163,16 +165,10 @@ d3.select("#sample").on("click", function () {
 	// ##############################################
 	// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
 	// ##############################################
-
-		});
-	});
-
-
-
 	
 	});
 	
-	
+});
 // USA Map work, using help from 0225 notes
 
 var width = 960,
@@ -293,6 +289,7 @@ d3.json("us.json", function(error, shapes) {
 				if (f.Cancelled === 1) {
 					continue;
 				}
+				if (i > 2000) {break;}
 				m = parseInt(f.Month);
 				if (m === 2) {
 					continue;
