@@ -129,19 +129,10 @@ var r0 = 18;
 //Append airports and also set colorings/ Ro for the trial
 d3.select("#set").on("click", function () {
 
-	for(var airport in airports){
-		var latitude = airports[airport].latitude;
-		var longitude = airports[airport].longitude;
-		
-		 
-		 if(projection([longitude, latitude]) != null ){
-		svg.append("circle").attr("r",1).attr("fill", " #7e7e7e").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
-		}
-		
 		var hi = document.getElementById("feedback");
 		hi.innerHTML = "Airports added to map!";
 		hi.innerHTML = hi.innerHTML + " <br> Spread rate added!";
-	};
+
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
 
@@ -216,9 +207,8 @@ g.append("g")
       .data(topojson.feature(us, us.objects.states).features)
     .enter().append("path").attr("class", "something")
       .attr("d", path)
-	  .style("stroke",  "#51A5BA")
-      .on("click", clicked).style("fill","#87E293")
-	;
+      .on("click", clicked);
+
 
 
   g.append("path")
@@ -226,8 +216,8 @@ g.append("g")
       .attr("id", "state-borders")
       .attr("d", path);
 	});
+
 	};
-	
 	
 	//Will zoom in when you click it.
 function clicked(d) {
