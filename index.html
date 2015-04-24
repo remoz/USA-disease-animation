@@ -159,9 +159,7 @@ d3.select("#sample").on("click", function () {
 	// Old infectives no longer infect other people
 	
 
-	for (var i = 0; i < 100; i++) {
-		states[randomState()].newInfected = states[randomState()].newInfected + 1;
-	}
+	states[randomState()].newInfected += 100;
 
 	flightsPerDay(flights[0],0,unloadPlane,flightsPerChunk);
 	
@@ -358,11 +356,7 @@ if(percent_infected == NaN){
 				if (f.Cancelled === 1) {
 					continue;
 				}
-				if (i > 2000) {return;}
-				m = parseInt(f.Month);
-				if (m === 2) {
-					continue;
-				}
+				if (i > 1000) {return;}
 				d = parseInt(f.DayofMonth);
 				flyer = {
 					src: f.Origin,
@@ -394,7 +388,7 @@ if(percent_infected == NaN){
 	function flightsPerDay(day,dayno,callback1,callback2) {
 		if (dayno === 28) {return;}
 		counter = 0
-		var arrays = [], size = 10;
+		var arrays = [], size = 100;
 
 		while (day.length > 0)
    		arrays.push(day.splice(0, size));
@@ -403,20 +397,21 @@ if(percent_infected == NaN){
 			callback2(flights,0);
 		});
 		//callback1(dayno,spreadDisease);
+		console.log('done with first dayyy')
 	}
 
-
+count = 0;
 	function flightsPerChunk(chunk,no) {
+		console.log('launching chunk no: ' + count);
 		flight = chunk[no];
 		if (flight === undefined) {return;}
 		//chunk.forEach(function(flight) {
 		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
 		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
-		console.log('going into animateFlight');
 		animateFlight(srcCoords, destCoords,chunk,no);
-		console.log('exited animateFlight');
 		//fly(airports[flight.src],airports[flight.dest]);
 		//});
+		count += 1
 	}
 
 	function unloadPlane(dayno,callback) {
@@ -451,7 +446,6 @@ if(percent_infected == NaN){
 
 	//What will be used to display the airplanes flying from airport to airport
 	function animateFlight(srcCoords, destCoords,chunk,no){
-	console.log('inside animateFlight');
 	var route = svg.append("path")
                .datum({type: "LineString", coordinates: [srcCoords, destCoords]})
                .attr("class", "route")
@@ -462,7 +456,7 @@ if(percent_infected == NaN){
 
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 200)
+        .duration(l * 50)
         .attrTween("transform", delta(route.node()))
         .each("end", function() { 
         	route.remove(); 
@@ -471,13 +465,10 @@ if(percent_infected == NaN){
         .remove();
 	}
   
-  function delta(path) {
-  	console.log('inside delta')
-    var l = path.getTotalLength();
+  function delta(path) {    var l = path.getTotalLength();
 
     return function(i) {
     	return function(t) {
-      	console.log('THIS IS IMPORTANT AFTER INSIDE DELTA')
         var p = path.getPointAtLength(t * l);
 
         var t2 = Math.min(t + 0.05, 1);
