@@ -9,7 +9,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 	<!-- Load the d3 library. -->
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
 		<script src="http://d3js.org/topojson.v1.min.js"></script>
 <style>
 body { background-color: #51A5BA}
@@ -36,20 +36,69 @@ body { background-color: #51A5BA}
 	width: 250px;
 	float: right;
 	background: #404040;
-	margin: -350px 0px 0px -30px;
+	margin: -250px 0px 0px -30px;
 	height: 200px;
-	box-shadow: 0px 0px 10px 0px #202020;
+	padding: 10px 10px 0px 10px;
+
+}
+#othercoolfont{
+padding: 0px 30px 0px 0px;
+float: left;
+}
+
+#coolfont{
+float: right;
+margin: 0px 20px 0px 0px;
+}
+h2{
+font-family: 'Lato', sans-serif;
+color: #FE8402;
+margin: 0px;
+}
+h3{
+font-family: 'Lato', sans-serif;
+color: #FE8402
+
+}
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+#states {
+  fill: #87E293;
+  opacity: 0.7;
+}
+
+#states .active {
+  fill: #FE8402;
+ 
+}
+
+#state-borders {
+  fill: none;
+  stroke: #51A5BA;
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+  opacity: 0.7;
 }
 </style>
 </head>
 <body>
 
-<div id="intro"> Info 3300: 28 Days Later (Disease in America)</div>
+<div id="intro"> <div id="coolfont">Info 3300</div> <div id="othercoolfont"> <h2> 28 Days Later (Disease in America)</h2> </div></div>
 <br> <br> <br>
 
 <div class="loader"></div>
+
 <div id="map"></div>
-<div id="information_reader"> Things will Go Here!</div>
+
+<div id="information_reader"> <h3>State Information: </h3><br> Click on a state to learn more about how the disease is affecting it. </div>
+
+
 <select id="diseasechoice">
   <option value="18">Measles</option>
   <option value="10">Mumps</option>
@@ -85,7 +134,7 @@ d3.select("#set").on("click", function () {
 		
 		 
 		 if(projection([longitude, latitude]) != null ){
-		svg.append("circle").attr("r",1).attr("fill", "black").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
+		svg.append("circle").attr("r",1).attr("fill", " #7e7e7e").attr("transform", function() {return "translate(" + projection([ longitude,latitude]) + ")";});
 		}
 		
 		var hi = document.getElementById("feedback");
@@ -114,99 +163,101 @@ d3.select("#sample").on("click", function () {
 		states[randomState()].newInfected = states[randomState()].newInfected + 1;
 	}
 
-	// ################################
-	// ##### UPDATE STATE COLORS ######
-	// ################################
-
-	
-	flights.forEach(function(day) {
-		day.forEach(function(flight) {
-			// ############################
-			// ##### ANIMATE FLIGHT  ######
-			// ############################
-
-			srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
-			destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
-			animateFlight(srcCoords, destCoords);
-			fly(airports[flight.src],airports[flight.dest]);
-		// Collect and display dest airport's spread Ratio
-		for (airport in airports) {
-			var a = airports[airport]
-			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
-			// ##############################################
-			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
-			// ##############################################
-
-			// Get people off planes into states
-			
-			states[a.state].population += a.incoming
-			a.incoming = 0
-			states[a.state].newInfected += a.newInfected
-			a.newInfected = 0
-			states[a.state].oldinfected += a.oldInfected
-			a.oldInfected = 0
-		}
-		// ################################
-		// ##### UPDATE STATE COLORS ######
-		// ################################
-
-		// Now take time to dissipate and spread disease
-		for (state in states) {
-			var s = states[state];
-			s.oldInfected += s.newInfected
-			s.newInfected = r0*s.newInfected
-		}
-		// ################################
-		// ##### UPDATE STATE COLORS ######
-		// ################################
-
-	// ##############################################
-	// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
-	// ##############################################
-
-		});
-	});
-
-
-
-	
-	});
+	flightsPerDay(flights[0],0,unloadPlane,flightsPerChunk);
 	
 	
+});
 // USA Map work, using help from 0225 notes
 
 var width = 960,
-    height = 500;
-
-var projection = d3.geo.albersUsa();
+    height = 500,
+    centered;
+	
+var projection = d3.geo.albersUsa()
+    .scale(1070)
+    .translate([width / 2, height / 2]);
 
 var path = d3.geo.path().projection(projection);
 	
 var svg = d3.select("#map").append("svg")
     .attr("width", width)
     .attr("height", height);
-var counties, states;
+	
+
+
+svg.append("rect")
+    .attr("class", "background")
+    .attr("width", width)
+    .attr("height", height)
+    .on("click", clicked);
+
+var g = svg.append("g");
 
 var usdaAtlas;
 
 // kept for later use involving the color changing based on infection
 var populationScale = d3.scale.linear().domain([-5, 0, 5]).range(["#d8b365", "#f5f5f5", "#5ab4ac"]);
 
-d3.json("us.json", function(error, shapes) {
-	counties = topojson.feature(shapes, shapes.objects.counties).features;
-	states1 = topojson.feature(shapes, shapes.objects.states).features;
-	
-		var statePaths = svg.append("g");
-		statePaths.selectAll("path").data(states1).enter()
-		.append("path").attr("d", path)
-		.style("fill", "#87E293").style("opacity", 0.7).style("stroke", "#51A5BA");
+d3.json("us.json", function(error, us) {
+g.append("g")
+      .attr("id", "states")
+    .selectAll("path")
+      .data(topojson.feature(us, us.objects.states).features)
+    .enter().append("path")
+      .attr("d", path)
+      .on("click", clicked);
+
+  g.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("id", "state-borders")
+      .attr("d", path);
 	});
-
-
-
-
-
 	
+	
+	// The id from click represents the ANSI code of the state.
+	// Right here I initialize an array of states, in the order they
+	//appear in ansi form.
+	
+	var ANSI_state = ["US", "AL", "AK","US", "AZ", "AR", "CA","US", "CO", "CT", "DE", "DC", "FL", "GA", "US", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA","US", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA","US", "WA", "WV", "WI", "WY"];
+	//Will zoom in when you click it.
+function clicked(d) {
+
+//gathers information about the state that was clicked
+var state_name = ANSI_state[d["id"]];
+var state_object = states[state_name];
+
+var state_pop = states[state_name]["population"];
+var state_infected = states[state_name]["newInfected"] + states[state_name]["oldInfected"];
+var percent_infected = state_infected / state_pop;
+if(percent_infected == NaN){
+	percent_infected = 0;
+}
+//Updates the information reader to show information about the state
+		var hi = document.getElementById("information_reader");
+		hi.innerHTML = " <h3>State Information: </h3><br>";
+		hi.innerHTML = hi.innerHTML + "State Population:   <b>" + state_pop + "</b><br><br>";
+		hi.innerHTML = hi.innerHTML + "Number Infected:  <b> " + state_infected +"</b><br> <br>";
+		hi.innerHTML = hi.innerHTML + "Percent Sick:  <b> " + percent_infected + "</b> %";
+
+  var x, y, k;
+
+  if (d && centered !== d) {
+    var centroid = path.centroid(d);
+    x = centroid[0];
+    y = centroid[1];
+    k = 4;
+    centered = d;
+  } else {
+    x = width / 2;
+    y = height / 2;
+    k = 1;
+    centered = null;
+  }
+
+  g.selectAll("path")
+      .classed("active", centered && function(d) { return d === centered; });
+
+}
 
 	
 	// STATE STUFF
@@ -264,6 +315,7 @@ d3.json("us.json", function(error, shapes) {
 	}*/
 	var airports = {};
 	var flights = [];
+	var flightsCSV = [];
 	d3.csv("airports.csv", function(data) {
 		airportsCSV = data;
 		airportsCSV.forEach(function(a) {
@@ -288,11 +340,13 @@ d3.json("us.json", function(error, shapes) {
 		};
 		d3.csv("2008flights.csv", function(data) {
 			flightsCSV = data;
+
 			for (var i = 0; i < flightsCSV.length; i++) {
 				f = flightsCSV[i]
 				if (f.Cancelled === 1) {
 					continue;
 				}
+				if (i > 2000) {return;}
 				m = parseInt(f.Month);
 				if (m === 2) {
 					continue;
@@ -316,7 +370,7 @@ d3.json("us.json", function(error, shapes) {
 
 	
 	// FLIGHT STUFF
-	var flightsCSV = [];
+	
 	/*flights = [
 		[{src: SRC, dest: DEST}, ...],	day 1
 		[{src: SRC, dest: DEST}, ...],	day 2
@@ -325,35 +379,92 @@ d3.json("us.json", function(error, shapes) {
 	Day 1 is flights[0]
 	}*/
 	
-	
+	function flightsPerDay(day,dayno,callback1,callback2) {
+		if (dayno === 28) {return;}
+		counter = 0
+		var arrays = [], size = 100;
+
+		while (day.length > 0)
+   		arrays.push(day.splice(0, size));
+
+   		arrays.forEach(function(flights) {
+			callback2(flights,0);
+		});
+		callback1(dayno,spreadDisease);
+	}
+
+
+	function flightsPerChunk(chunk,no) {
+		flight = chunk[no];
+		//chunk.forEach(function(flight) {
+		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
+		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
+		console.log('going into animateFlight');
+		animateFlight(srcCoords, destCoords,chunk,no);
+		console.log('exited animateFlight');
+		fly(airports[flight.src],airports[flight.dest]);
+		//});
+	}
+
+	function unloadPlane(dayno,callback) {
+		for (airport in airports) {
+			var a = airports[airport]
+			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
+			// ##############################################
+			// ##### DISPLAY SPREAD RATIO FOR AIRPORTS ######
+			// ##############################################
+
+			// Get people off planes into states
+			
+			states[a.state].population += a.incoming
+			a.incoming = 0
+			states[a.state].newInfected += a.newInfected
+			a.newInfected = 0
+			states[a.state].oldinfected += a.oldInfected
+			a.oldInfected = 0
+		}
+		callback(dayno,flightsPerDay);
+	}
+
+	function spreadDisease(dayno,callback) {
+		for (state in states) {
+			var s = states[state];
+			s.oldInfected += s.newInfected
+			s.newInfected = r0*s.newInfected
+		}
+		callback(flights[dayno],dayno+1,unloadPlane,flightsPerChunk);
+	}
+
+
 	//What will be used to display the airplanes flying from airport to airport
-	function animateFlight(srcCoords, destCoords){
+	function animateFlight(srcCoords, destCoords,chunk,no){
+	console.log('inside animateFlight');
 	var route = svg.append("path")
                .datum({type: "LineString", coordinates: [srcCoords, destCoords]})
                .attr("class", "route")
                .attr("d", path);
 	var plane = svg.append("path")
                    .attr("class", "plane")
-                   .attr("d", "m25.21488,3.93375c-0.44355,0 -0.84275,0.18332 -1.17933,0.51592c-0.33397,0.33267 -0.61055,0.80884 -0.84275,1.40377c-0.45922,1.18911 -0.74362,2.85964 -0.89755,4.86085c-0.15655,1.99729 -0.18263,4.32223 -0.11741,6.81118c-5.51835,2.26427 -16.7116,6.93857 -17.60916,7.98223c-1.19759,1.38937 -0.81143,2.98095 -0.32874,4.03902l18.39971,-3.74549c0.38616,4.88048 0.94192,9.7138 1.42461,13.50099c-1.80032,0.52703 -5.1609,1.56679 -5.85232,2.21255c-0.95496,0.88711 -0.95496,3.75718 -0.95496,3.75718l7.53,-0.61316c0.17743,1.23545 0.28701,1.95767 0.28701,1.95767l0.01304,0.06557l0.06002,0l0.13829,0l0.0574,0l0.01043,-0.06557c0,0 0.11218,-0.72222 0.28961,-1.95767l7.53164,0.61316c0,0 0,-2.87006 -0.95496,-3.75718c-0.69044,-0.64577 -4.05363,-1.68813 -5.85133,-2.21516c0.48009,-3.77545 1.03061,-8.58921 1.42198,-13.45404l18.18207,3.70115c0.48009,-1.05806 0.86881,-2.64965 -0.32617,-4.03902c-0.88969,-1.03062 -11.81147,-5.60054 -17.39409,-7.89352c0.06524,-2.52287 0.04175,-4.88024 -0.1148,-6.89989l0,-0.00476c-0.15655,-1.99844 -0.44094,-3.6683 -0.90277,-4.8561c-0.22699,-0.59493 -0.50356,-1.07111 -0.83754,-1.40377c-0.33658,-0.3326 -0.73578,-0.51592 -1.18194,-0.51592l0,0l-0.00001,0l0,0z");
+                   .attr("d", "m25.21488,3.93375c-0.44355,0 -0.84275,0.18332 -1.17933,0.51592c-0.33397,0.33267 -0.61055,0.80884 -0.84275,1.40377c-0.45922,1.18911 -0.74362,2.85964 -0.89755,4.86085c-0.15655,1.99729 -0.18263,4.32223 -0.11741,6.81118c-5.51835,2.26427 -16.7116,6.93857 -17.60916,7.98223c-1.19759,1.38937 -0.81143,2.98095 -0.32874,4.03902l18.39971,-3.74549c0.38616,4.88048 0.94192,9.7138 1.42461,13.50099c-1.80032,0.52703 -5.1609,1.56679 -5.85232,2.21255c-0.95496,0.88711 -0.95496,3.75718 -0.95496,3.75718l7.53,-0.61316c0.17743,1.23545 0.28701,1.95767 0.28701,1.95767l0.01304,0.06557l0.06002,0l0.13829,0l0.0574,0l0.01043,-0.06557c0,0 0.11218,-0.72222 0.28961,-1.95767l7.53164,0.61316c0,0 0,-2.87006 -0.95496,-3.75718c-0.69044,-0.64577 -4.05363,-1.68813 -5.85133,-2.21516c0.48009,-3.77545 1.03061,-8.58921 1.42198,-13.45404l18.18207,3.70115c0.48009,-1.05806 0.86881,-2.64965 -0.32617,-4.03902c-0.88969,-1.03062 -11.81147,-5.60054 -17.39409,-7.89352c0.06524,-2.52287 0.04175,-4.88024 -0.1148,-6.89989l0,-0.00476c-0.15655,-1.99844 -0.44094,-3.6683 -0.90277,-4.8561c-0.22699,-0.59493 -0.50356,-1.07111 -0.83754,-1.40377c-0.33658,-0.3326 -0.73578,-0.51592 -1.18194,-0.51592l0,0l-0.00001,0l0,0z").style("fill", "white");
 
-    transition(plane, route);
-	
-	}
-
-	function transition(plane, route) {
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 300)
-        .attrTween("transform", delta(plane, route.node()))
-        .each("end", function() { route.remove(); })
+        .duration(l * 200)
+        .attrTween("transform", delta(route.node()))
+        .each("end", function() { 
+        	route.remove(); 
+        	flightsPerChunk(chunk,no+1)
+        })
         .remove();
-  }
+	}
   
-  function delta(plane, path) {
+  function delta(path) {
+  	console.log('inside delta')
     var l = path.getTotalLength();
-    var plane = plane;
+
     return function(i) {
-      return function(t) {
+    	return function(t) {
+      	console.log('THIS IS IMPORTANT AFTER INSIDE DELTA')
         var p = path.getPointAtLength(t * l);
 
         var t2 = Math.min(t + 0.05, 1);
@@ -367,10 +478,9 @@ d3.json("us.json", function(error, shapes) {
 
         return "translate(" + p.x + "," + p.y + ") scale(" + s + ") rotate(" + r + ")";
       }
-    }
+	}
   }
-	
-//------------
+
 
 
 //----- Blog functions end here.
@@ -399,6 +509,9 @@ d3.json("us.json", function(error, shapes) {
 
 	};
 
+
+
+	
 	
 	
 	</script>
