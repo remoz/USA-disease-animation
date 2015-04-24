@@ -378,17 +378,25 @@ if(percent_infected == NaN){
 	Day 1 is flights[0]
 	}*/
 	
-	function flightsPerDay(day, dayno,callback) {
+	function flightsPerDay(day,dayno,callback) {
 		console.log('fligthsperDay');
 		console.log(dayno);
-		if (dayno == 28) {return;}
+		if (dayno == 1) {return;}
+		counter = 0
 		day.forEach(function(flight) {
 			srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
 			destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
 			animateFlight(srcCoords, destCoords);
 			fly(airports[flight.src],airports[flight.dest]);
-			callback(dayno,spreadDisease);
+			
 		});
+		callback(dayno,spreadDisease);
+	}
+
+
+	function flightsPerChunk(chunk,callback) {
+		console.log('flightsperChunk');
+
 	}
 
 	function unloadPlane(dayno,callback) {
