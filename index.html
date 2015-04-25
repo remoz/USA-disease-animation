@@ -516,6 +516,7 @@ var fullname = state_fullnames[state_name];
 	
 	});
 	
+	stories = { 1: 'After a dead chicken is discovered in a well, locals discover strange green bumps on their flesh. Now everyone is running around wildly in panic.', 2: 'The freak snow storm unleashed a new wave of low immune systems and rather irritated bees.', 3: 'After the world discovered the powers of d3, one suspicious INFO 3300 student uploaded a powerful visual design that hypnotizes people and urges them to drink in toilets. Unfortunately, now many people are sick.', 4: 'It started with one guy who refused to cover his mouth. Now even the dogs are sniffling.' , 5: 'Nikki Minaj released a new album today. Oh, and a lot of people are sick. Like, a lot.' ,6: 'The people in this state thought that this 28 Days Later simulation was so sick, they actually GOT sick. We send them our condolences.', 7: 'Something strange is happening and Grandma Rudy came back from the grave. She wanted to remind you to use hand sanitizer, because people are getting ill.', 8: 'We... think people are eating brains. Or maybe they just have the flu.'
 	};
 	
 	//creates the interface you see after you run a day of the simulation, with options to choose which day to view, along with a story blurb about the disease spread.
@@ -523,6 +524,7 @@ var fullname = state_fullnames[state_name];
 		document.getElementById("disease_story").style.visibility = "visible";
 		document.getElementById("chooseday").style.visibility = "visible";
 		
+		var rand = Math.ceil(Math.random()*8);
 		document.getElementById("disease_story").innerHTML = "<h3> Breaking News: </h3> "+ trial_details['Disease'] + " running amok in " + state_fullnames[trial_details['Init_State']] + "! <br> <br>" + stories[rand];
 	};
 
