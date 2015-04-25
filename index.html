@@ -421,9 +421,9 @@ g.append("g")
 	
 	
 	// Will update and change the state colors based on the new values stored in the state object's color feature.
-	function update_state_colors(){
-		for(var i; i < 57; i++){
-		
+	function update_state_colors(color1, color2){
+		for(var i = 1; i < 57; i++){
+			if(i != 3 && i != 7 && i != 11 && i != 14 && i != 43 && i != 52){
 			var id = "#a"+i;
 			var state_name = ANSI_state[i];
 			var total = states[state_name]['population'];
@@ -431,9 +431,16 @@ g.append("g")
 			
 			var illpercent = infected/total * 100;
 			
-			d3.select(id).style("fill", "red");
+			colorshift = d3.scale.linear()
+			.domain([0, 1]).range([color1, color2]);
+			
+			console.log(id);
+			console.log(illpercent);
+			d3.select(id).style("fill", colorshift(illpercent));
+			}
 		
 		}
+		
 	
 	
 	}
