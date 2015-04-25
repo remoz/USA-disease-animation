@@ -179,7 +179,6 @@ color: #FE8402
 
 
  <select id="daychoice">
-  <option value="1"> 1</option>
   <option value="2"> 2</option>
   <option value="3"> 3</option>
   <option value="4"> 4</option>
@@ -209,6 +208,8 @@ color: #FE8402
 	<option value="28"> 28 </option>
 </select>
  <b>Days After Disease Start </b> 
+ <button type="button" id="daybutton">Go!</button> 
+ 
 </div>
 
 <div id="controls">
@@ -224,7 +225,7 @@ color: #FE8402
 </select>
  <br> <br>
  Flight Animation Speed<br>
-fast <input type="range" id="myrange" min="1" max="500"> slow
+fast <input type="range" id="myrange" min=".5" max="100"> slow
 <br> <br> 
 <button type="button" id="set">Set Map!</button> <div id="feedback">
 
@@ -245,7 +246,7 @@ fast <input type="range" id="myrange" min="1" max="500"> slow
 
 <script>
 
-var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0, 'Current Day':0};
+var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0 , 'Speed' : 250, 'Current Day': 2};
 
 // Add drop down menu to select disease
 
@@ -310,10 +311,20 @@ var state_fullnames = {
             'WI':'Wisconsin',
             'WY':'Wyoming',
         };
+		
+		
+// Click button to show a new day and the spread map for it.
+d3.select("#daybutton").on("click", function () {	
+	var day = document.getElementById("daychoice").value;
+	trial_details['Current Day'] = day;
+
+});	
+		
 // Click button to colorings/ Ro / speed for the trial
 d3.select("#set").on("click", function () {
 
 		var speed = document.getElementById("myrange").value;
+		trial_details['Speed'] = speed;
 		var hi = document.getElementById("feedback");
 	
 		hi.innerHTML = "Settings have been stored!";
@@ -345,12 +356,13 @@ var speed = document.getElementById("myrange").value;
 	var randstate = randomState();
 	states[randstate].newInfected += 100;
 	dayno = 0;
-	goToDate = 2;
+	goToDate = 6;
 	flightsPerDay(dayno,goToDate);
 	
 	trial_details['Init_State'] = randstate;
 	trial_details['Current Day'] = goToDate;
-	var patientzero = 100;
+	
+	var patientzero = 50000;
 	trial_details['Num_patientzeros'] = patientzero;
 	states[randstate].newInfected += patientzero;
 
@@ -435,8 +447,6 @@ g.append("g")
 			colorshift = d3.scale.linear()
 			.domain([0, 1]).range([color1, color2]);
 			
-			console.log(id);
-			console.log(illpercent);
 			d3.select(id).style("fill", colorshift(illpercent));
 			}
 		
@@ -517,13 +527,17 @@ var fullname = state_fullnames[state_name];
 	
 	});
 	
+	stories = { 1: 'After a dead chicken is discovered in a well, locals discover strange green bumps on their flesh. Now everyone is running around wildly in panic.', 2: 'The freak snow storm unleashed a new wave of low immune systems and rather irritated bees.', 3: 'After the world discovered the powers of d3, one suspicious INFO 3300 student uploaded a powerful visual design that hypnotizes people and urges them to drink in toilets. Unfortunately, now many people are sick.', 4: 'It started with one guy who refused to cover his mouth. Now even the dogs are sniffling.' , 5: 'Nikki Minaj released a new album today. Oh, and a lot of people are sick. Like, a lot.' ,6: 'The people in this state thought that this 28 Days Later simulation was so sick, they actually GOT sick. We send them our condolences.', 7: 'Something strange is happening and Grandma Rudy came back from the grave. She wanted to remind you to use hand sanitizer, because people are getting ill.', 8: 'We... think people are eating brains. Or maybe they just have the flu.'
+	};
+	
 	//creates the interface you see after you run a day of the simulation, with options to choose which day to view, along with a story blurb about the disease spread.
 	function createinterface(){
 		document.getElementById("disease_story").style.visibility = "visible";
 		document.getElementById("chooseday").style.visibility = "visible";
 		
-		document.getElementById("disease_story").innerHTML = "The story will go here.";
-	}
+		var rand = Math.ceil(Math.random()*8);
+		document.getElementById("disease_story").innerHTML = "<h3> Breaking News: </h3> "+ trial_details['Disease'] + " running amok in " + state_fullnames[trial_details['Init_State']] + "! <br> <br>" + stories[rand];
+	};
 
 	function randomState() {
 	    var result;
@@ -644,7 +658,6 @@ var fullname = state_fullnames[state_name];
 	function flightsPerChunk(chunk,no,fnum,dayAmt,dayno,goToDate) {
 		//console.log(dayno + ' please dont be undefined')
 		fnum += 1
-		console.log(fnum + ' THIS IS FNUm')
 		flight = chunk[no];
 		if (flight === undefined) {return;}
 		//chunk.forEach(function(flight) {
@@ -691,7 +704,11 @@ var fullname = state_fullnames[state_name];
 			s.newInfected = potNew
 		}
 		dayno += 1
+		update_state_colors("#87E293", "#E82246");
+		createinterface();
 		flightsPerDay(dayno,goToDate)
+		
+
 	}
 	
 
@@ -709,7 +726,7 @@ var fullname = state_fullnames[state_name];
     plane.style('opacity',1).style('fill','white');
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 1)
+        .duration(l * trial_details['Speed'])
         .attrTween("transform", delta(route.node()))
         .each("end", function() { 
         	route.remove(); 
@@ -764,7 +781,7 @@ var fullname = state_fullnames[state_name];
 		//console.log(states[src.state].population)
 		newinfected = 0;
 		oldinfected = 0;
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 100; i++) {
 			r = Math.random();
 			newInfectedProb = states[src.state].newInfected/states[src.state].population
 			oldInfectedProb = states[src.state].oldInfected/states[src.state].population
