@@ -56,6 +56,11 @@ body { background-color: #51A5BA;}
 	padding: 10px 10px 0px 10px;
 
 }
+#feedback{
+	font-family: 'Lato', sans-serif;
+	font-size: 10px;
+}
+
 #othercoolfont{
 padding: 0px 30px 0px 0px;
 float: left;
@@ -104,16 +109,65 @@ color: #FE8402
   opacity: 0.7;
 }
 
+.loader {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('https://d13yacurqjgara.cloudfront.net/users/121337/screenshots/916951/small-load.gif') 50% 50% no-repeat #15191F;
+}
 
+#hideplane{
+	width: 30px;
+	height: 30px;
+	background-color: #51A5BA;
+	position: fixed;
+	
+}
 
+#chooseday{
+	font-size: 16px;
+	font-family: 'Lato', sans-serif;
+	color: #FE8402;
+	width: 250px;
+	float: right;
+	background: #404040;
+	margin: -550px 0px 0px -30px;
+	height: 30px;
+	padding: 10px 10px 0px 10px;
+	visibility: hidden
+}
+
+#disease_story{
+	font-family: 'Lato', sans-serif;
+	font-weight: 300;
+	font-size: 14px;
+	color: white;
+	width: 250px;
+	float: right;
+	background: #404040;
+	margin: -480px 0px 0px -30px;
+	height: 250px;
+	padding: 10px 10px 0px 10px;
+	visibility: hidden
+
+}
 </style>
 </head>
 <body>
 
+
+<div class="loader"></div>
+
+
+
 <div id="intro"> <div id="coolfont">Info 3300</div> <div id="othercoolfont"> <h2> 28 Days Later (Disease in America)</h2> </div></div>
 <br> <br> <br>
 
-
+<br> <br> <br> <br>
+<div id="hideplane"> </div>
 
 
 
@@ -121,7 +175,41 @@ color: #FE8402
 
 <div id="information_reader"> <br> <h3>State Information: </h3> Click on a state to learn more about how the disease is affecting it. </div>
 
+<div id="chooseday">
 
+
+ <select id="daychoice">
+  <option value="1"> 1</option>
+  <option value="2"> 2</option>
+  <option value="3"> 3</option>
+  <option value="4"> 4</option>
+    <option value="5">5</option>
+	<option value="6"> 6 </option>
+	<option value="7"> 7 </option>
+	<option value="8"> 8 </option>
+	<option value="9"> 9 </option>
+	<option value="10"> 10 </option>
+	<option value="11"> 11</option>
+  <option value="12"> 12</option>
+  <option value="13"> 13</option>
+  <option value="14"> 14</option>
+    <option value="15">15</option>
+	<option value="16">16 </option>
+	<option value="17"> 17 </option>
+	<option value="18"> 18 </option>
+	<option value="19"> 19 </option>
+	<option value="20"> 20 </option>
+	  <option value="21"> 21</option>
+  <option value="22"> 22</option>
+  <option value="23"> 23</option>
+  <option value="24"> 24</option>
+    <option value="25">25</option>
+	<option value="26"> 26 </option>
+	<option value="27"> 27 </option>
+	<option value="28"> 28 </option>
+</select>
+ <b>Days After Disease Start </b> 
+</div>
 
 <div id="controls">
 <h3> Controls </h3>
@@ -138,18 +226,26 @@ color: #FE8402
  Flight Animation Speed<br>
 fast <input type="range" id="myrange" min="1" max="500"> slow
 <br> <br> 
-<button type="button" id="set">Set Map!</button>
-<br> <br>
+<button type="button" id="set">Set Map!</button> <div id="feedback">
+
+</div>
+<br> 
 <button type="button" id="sample">Start Animation!</button> <br> <br>
 
 ---------------------------------------
 </div>
 
-<div id="feedback">
-Page is still loading~
+
+<div id="disease_story">
+...
+
 </div>
 
+
+
 <script>
+
+var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0};
 
 // Add drop down menu to select disease
 
@@ -220,14 +316,17 @@ d3.select("#set").on("click", function () {
 		var speed = document.getElementById("myrange").value;
 		var hi = document.getElementById("feedback");
 	
-		hi.innerHTML = "Spread rate added!";
-		hi.innerHTML= hi.innerHTML + "<br> New speed added. (" + speed + ")";
+		hi.innerHTML = "Settings have been stored!";
+		
 	
 	var selectedValue = document.getElementById("diseasechoice").value;
+	var selectedDisease = $("#diseasechoice :selected").text();
+	
 
+	trial_details['Disease'] = selectedDisease;
 	
 	r0 = parseInt( selectedValue);
-
+trial_details['R0'] = r0;
 	
 	return r0;
 	
@@ -243,11 +342,17 @@ var speed = document.getElementById("myrange").value;
 	// Disease spread is equal to r0 for each new infective
 	// Old infectives no longer infect other people
 	
-
-	states[randomState()].newInfected += 100;
+	var randstate = randomState();
+	states[randstate].newInfected += 100;
 	goToDate = 3;
 	flightsPerDay(0);
-	console.log('DONE WITH ALL DAY')
+	
+	trial_details['Init_State'] = randstate;
+	
+	var patientzero = 100;
+	trial_details['Num_patientzeros'] = patientzero;
+	states[randstate].newInfected += patientzero;
+
 	
 	
 });
@@ -288,7 +393,7 @@ var usdaAtlas;
 // kept for later use involving the color changing based on infection
 
 
-console.log(states);
+
 drawmap(states, false);
 
 function drawmap(blah, yes){
@@ -379,10 +484,17 @@ var fullname = state_fullnames[state_name];
 				color: 'ffffff'};
 		})
 		
-		var hi = document.getElementById("feedback");
-		hi.innerHTML = hi.innerHTML + "... ~";
+		
 	
 	});
+	
+	//creates the interface you see after you run a day of the simulation, with options to choose which day to view, along with a story blurb about the disease spread.
+	function createinterface(){
+		document.getElementById("disease_story").style.visibility = "visible";
+		document.getElementById("chooseday").style.visibility = "visible";
+		
+		document.getElementById("disease_story").innerHTML = "The story will go here.";
+	}
 
 	function randomState() {
 	    var result;
@@ -427,8 +539,7 @@ var fullname = state_fullnames[state_name];
 			}
 		});
 		
-		var hi = document.getElementById("feedback");
-		hi.innerHTML = hi.innerHTML + "... ~";
+
 
 		
 		for (var i = 0; i < 28; i++) {
@@ -454,8 +565,7 @@ var fullname = state_fullnames[state_name];
 				flights[(d-1)].push(flyer);
 				};
 			
-		var hi = document.getElementById("feedback");
-			hi.innerHTML = "FINISHED LOADING!";
+					$(".loader").fadeOut("slow");
 			};
 	});
 	});
@@ -528,7 +638,6 @@ var fullname = state_fullnames[state_name];
 			states[a.state].oldInfected += a.oldInfected
 			a.oldInfected = 0
 		}
-		//callback(dayno,flightsPerDay);
 		spreadDisease(dayno+1);
 	}
 	function spreadDisease(dayno) {
@@ -548,7 +657,6 @@ var fullname = state_fullnames[state_name];
 		}
 		flightsPerDay(dayno)
 
-		//callback(flights[dayno],dayno+1,unloadPlane,flightsPerChunk);
 	}
 
 
