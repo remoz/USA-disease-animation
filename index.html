@@ -348,7 +348,7 @@ var speed = document.getElementById("myrange").value;
 	
 	trial_details['Init_State'] = randstate;
 	
-	var patientzero = 100;
+	var patientzero = 50000;
 	trial_details['Num_patientzeros'] = patientzero;
 	states[randstate].newInfected += patientzero;
 
@@ -680,6 +680,7 @@ var fullname = state_fullnames[state_name];
 				potNew = s.population-s.oldInfected}
 			s.newInfected = potNew
 		}
+		update_state_colors("#87E293", "#E82246");
 		flightsPerDay(dayno+1,goToDate)
 
 	}
