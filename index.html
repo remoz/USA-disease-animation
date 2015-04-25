@@ -120,8 +120,8 @@ color: #FE8402
 }
 
 #hideplane{
-	width: 30px;
-	height: 30px;
+	width: 50px;
+	height: 50px;
 	background-color: #51A5BA;
 	position: fixed;
 	
@@ -163,7 +163,7 @@ color: #FE8402
 
 
 
-<div id="intro"> <div id="coolfont">Info 3300</div> <div id="othercoolfont"> <h2> 28 Days Later (Disease in America)</h2> </div></div>
+<div id="intro"> <div id="coolfont">Info 3300</div> <div id="othercoolfont"> <h2> 28 Days Later (Spread of Different Diseases in America)</h2> </div></div>
 <br> <br> <br>
 
 <br> <br> <br> <br>
@@ -402,7 +402,9 @@ g.append("g")
       .attr("id", "states")
     .selectAll("path")
       .data(topojson.feature(us, us.objects.states).features)
-    .enter().append("path").attr("class", "something")
+    .enter().append("path").attr("class", "something").attr("id", function(states){
+		return 'a'+states.id;
+	})
       .attr("d", path)
       .on("click", clicked);
 
@@ -415,6 +417,32 @@ g.append("g")
 	});
 
 	};
+	
+	
+	// Will update and change the state colors based on the new values stored in the state object's color feature.
+	function update_state_colors(color1, color2){
+		for(var i = 1; i < 57; i++){
+			if(i != 3 && i != 7 && i != 11 && i != 14 && i != 43 && i != 52){
+			var id = "#a"+i;
+			var state_name = ANSI_state[i];
+			var total = states[state_name]['population'];
+			var infected = states[state_name]['newInfected'] + states[state_name]['oldInfected'];
+			
+			var illpercent = infected/total * 100;
+			
+			colorshift = d3.scale.linear()
+			.domain([0, 1]).range([color1, color2]);
+			
+			console.log(id);
+			console.log(illpercent);
+			d3.select(id).style("fill", colorshift(illpercent));
+			}
+		
+		}
+		
+	
+	
+	}
 	
 	//Will zoom in when you click it.
 function clicked(d) {
