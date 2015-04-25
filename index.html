@@ -403,7 +403,9 @@ g.append("g")
       .attr("id", "states")
     .selectAll("path")
       .data(topojson.feature(us, us.objects.states).features)
-    .enter().append("path").attr("class", "something")
+    .enter().append("path").attr("class", "something").attr("id", function(states){
+		return 'a'+states.id;
+	})
       .attr("d", path)
       .on("click", clicked);
 
@@ -416,6 +418,25 @@ g.append("g")
 	});
 
 	};
+	
+	
+	// Will update and change the state colors based on the new values stored in the state object's color feature.
+	function update_state_colors(){
+		for(var i; i < 57; i++){
+		
+			var id = "#a"+i;
+			var state_name = ANSI_state[i];
+			var total = states[state_name]['population'];
+			var infected = states[state_name]['newInfected'] + states[state_name]['oldInfected'];
+			
+			var illpercent = infected/total * 100;
+			
+			d3.select(id).style("fill", "red");
+		
+		}
+	
+	
+	}
 	
 	//Will zoom in when you click it.
 function clicked(d) {
