@@ -255,8 +255,6 @@ var r0s = {Measles: 18, Mumps: 10, AIDS: 4, SARS: 4, Ebola: 2}
 var r0 = 18;
 
 
-var goToDate = 1;
-
 var state_fullnames = {
             'AL':'Alabama',
             'AK':'Alaska',
@@ -344,8 +342,9 @@ var speed = document.getElementById("myrange").value;
 	
 	var randstate = randomState();
 	states[randstate].newInfected += 100;
-	goToDate = 3;
-	flightsPerDay(0);
+	dayno = 0;
+	goToDate = 1;
+	flightsPerDay(dayno,goToDate);
 	
 	trial_details['Init_State'] = randstate;
 	
@@ -553,9 +552,9 @@ var fullname = state_fullnames[state_name];
 				if (f.Cancelled === 1) {
 					continue;
 				}
-				if (i < 1900 ) {continue;}
-				if (i === 1903) {break;}
-				//if (i > 19000) {break;}
+				/*if (i < 1900 ) {continue;}
+				if (i === 1903) {break;}*/
+				if (i > 19000) {break;}
 				d = parseInt(f.DayofMonth);
 				flyer = {
 					src: f.Origin,
@@ -586,17 +585,17 @@ var fullname = state_fullnames[state_name];
 	animatedNo = 0;
 	dayAmt = 0;
 	//if goToDate = 28, then it should be the 27th day
-	function flightsPerDay(dayno) {
-		console.log(goToDate)
-		if (dayno === 28){return;}
+	function flightsPerDay(dayno,goToDate) {
+		console.log('in flightsperday');
+		console.log('dayno and gotodate :' + dayno + ' ' + goToDate)
+		if (dayno === 28 || dayno == goToDate){return;}
 		var arrays = [], size = 100;
 		day = flights[dayno];
 		dayAmt = day.length;
-		while (day.length > 0)
-   		arrays.push(day.splice(0, size));
+		while (day.length > 0){
+   		arrays.push(day.splice(0, size));}
    		arrays.forEach(function(flights) {
-   			//console.log('launching chunk : ' + count)
-			flightsPerChunk(flights,0,dayno);
+			flightsPerChunk(flights,0,dayno,goToDate);
 			count += 1
 		});
 		//callback1(dayno,spreadDisease);
@@ -604,7 +603,7 @@ var fullname = state_fullnames[state_name];
 	}
 
 
-	function flightsPerChunk(chunk,no,dayno) {
+	function flightsPerChunk(chunk,no,dayno,goToDate) {
 		flight = chunk[no];
 		if (flight === undefined) {return;}
 		//chunk.forEach(function(flight) {
@@ -613,15 +612,17 @@ var fullname = state_fullnames[state_name];
 
 		fly(airports[flight.src],airports[flight.dest]);
 		if (dayno !== goToDate-1) {
-			unloadPlane(dayno);
+			console.log('going to unloadPlane')
+			unloadPlane(dayno,goToDate);
 		} else {
-			animateFlight(srcCoords, destCoords,chunk,no,dayno);
+			animateFlight(srcCoords, destCoords,chunk,no,dayno,goToDate);
 		}
 			
 		//});
 	}
 
-	function unloadPlane(dayno) {
+	function unloadPlane(dayno,goToDate) {
+		console.log('in unloading')
 		for (airport in airports) {
 			var a = airports[airport]
 			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
@@ -638,9 +639,9 @@ var fullname = state_fullnames[state_name];
 			states[a.state].oldInfected += a.oldInfected
 			a.oldInfected = 0
 		}
-		spreadDisease(dayno+1);
+		spreadDisease(dayno,goToDate);
 	}
-	function spreadDisease(dayno) {
+	function spreadDisease(dayno,goToDate) {
 	//function spreadDisease(dayno,callback) {
 		console.log('spreading')
 		for (state in states) {
@@ -648,14 +649,10 @@ var fullname = state_fullnames[state_name];
 			s.oldInfected += s.newInfected
 			potNew = r0*s.newInfected
 			if (potNew+s.oldInfected > s.population) {
-				console.log('this is potentail new ill: ' + potNew)
 				potNew = s.population-s.oldInfected}
 			s.newInfected = potNew
-			if (state === 'WY') {
-				console.log(s);
-			}
 		}
-		flightsPerDay(dayno)
+		flightsPerDay(dayno+1,goToDate)
 
 	}
 
@@ -673,7 +670,7 @@ var fullname = state_fullnames[state_name];
     plane.style('opacity',1).style('fill','white');
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 100)
+        .duration(l * 1)
         .attrTween("transform", delta(route.node()))
         .each("end", function() { 
         	route.remove(); 
@@ -681,12 +678,13 @@ var fullname = state_fullnames[state_name];
         	if (animatedNo === dayAmt) {
         		console.log('is it done?')
         		animatedNo = 0;
+        		console.log('yahhh unloading fosho')
         		unloadPlane(dayno,goToDate);
         		
         	} else {
         		/*console.log('this is # of animated planes: ' + animatedNo);
         		console.log('day amount' + dayAmt)*/
-        		flightsPerChunk(chunk,no+1)
+        		flightsPerChunk(chunk,no+1,dayno,goToDate)
 
         	}
         })
@@ -743,8 +741,6 @@ var fullname = state_fullnames[state_name];
 			dest.incoming += 1
 			states[src.state].population -= 1
 		}
-		console.log(newinfected + ' that was how many NEW you wanted')
-		console.log(oldinfected + ' that was how many OLD you wanted')
 		
 
 	};
