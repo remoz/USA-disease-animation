@@ -137,7 +137,7 @@ color: #FE8402
 	margin: -550px 0px 0px -30px;
 	height: 30px;
 	padding: 10px 10px 0px 10px;
-	visibility: hidden
+
 }
 
 #disease_story{
@@ -208,7 +208,7 @@ color: #FE8402
 	<option value="28"> 28 </option>
 </select>
  <b>Days After Disease Start </b> 
- <button type="button" id="daybutton">Go!</button> 
+
  
 </div>
 
@@ -313,15 +313,13 @@ var state_fullnames = {
         };
 		
 		
-// Click button to show a new day and the spread map for it.
-d3.select("#daybutton").on("click", function () {	
-	var day = document.getElementById("daychoice").value;
-	trial_details['Current Day'] = day;
 
-});	
 		
 // Click button to colorings/ Ro / speed for the trial
 d3.select("#set").on("click", function () {
+
+var day = document.getElementById("daychoice").value;
+	trial_details['Current Day'] = day;
 
 		var speed = document.getElementById("myrange").value;
 		trial_details['Speed'] = speed;
