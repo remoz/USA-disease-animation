@@ -179,7 +179,6 @@ color: #FE8402
 
 
  <select id="daychoice">
-  <option value="1"> 1</option>
   <option value="2"> 2</option>
   <option value="3"> 3</option>
   <option value="4"> 4</option>
@@ -209,6 +208,8 @@ color: #FE8402
 	<option value="28"> 28 </option>
 </select>
  <b>Days After Disease Start </b> 
+ <button type="button" id="daybutton">Go!</button> 
+ 
 </div>
 
 <div id="controls">
@@ -245,7 +246,7 @@ fast <input type="range" id="myrange" min=".5" max="100"> slow
 
 <script>
 
-var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0 , 'Speed' : 250};
+var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0 , 'Speed' : 250, 'Day': 2};
 
 // Add drop down menu to select disease
 
@@ -308,6 +309,15 @@ var state_fullnames = {
             'WI':'Wisconsin',
             'WY':'Wyoming',
         };
+		
+		
+// Click button to show a new day and the spread map for it.
+d3.select("#daybutton").on("click", function () {	
+	var day = document.getElementById("daychoice").value;
+	trial_details['Day'] = day;
+
+};	
+		
 // Click button to colorings/ Ro / speed for the trial
 d3.select("#set").on("click", function () {
 
