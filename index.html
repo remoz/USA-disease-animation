@@ -158,6 +158,9 @@ var r0s = {Measles: 18, Mumps: 10, AIDS: 4, SARS: 4, Ebola: 2}
 
 var r0 = 18;
 
+
+var goToDate = 1;
+
 var state_fullnames = {
             'AL':'Alabama',
             'AK':'Alaska',
@@ -242,8 +245,8 @@ var speed = document.getElementById("myrange").value;
 	
 
 	states[randomState()].newInfected += 100;
-
-	flightsPerDay(flights[0],0,unloadPlane,flightsPerChunk);
+	goToDate = 3;
+	flightsPerDay(0);
 	console.log('DONE WITH ALL DAY')
 	
 	
@@ -412,7 +415,7 @@ var fullname = state_fullnames[state_name];
 	d3.csv("airports.csv", function(data) {
 		airportsCSV = data;
 		airportsCSV.forEach(function(a) {
-			if (a.State in states && projection([a.Longitude,a.Latitude])!= null) {
+			if (a.State in states && projection([a.Longitude,a.Latitude])!== null) {
 				airports[a.IATA] = {
 					state: a.State, 
 					incoming: 0, 
@@ -440,7 +443,8 @@ var fullname = state_fullnames[state_name];
 					continue;
 				}
 				if (i < 1900 ) {continue;}
-				if (i === 1902) {break;}
+				if (i === 1903) {break;}
+				//if (i > 19000) {break;}
 				d = parseInt(f.DayofMonth);
 				flyer = {
 					src: f.Origin,
@@ -471,20 +475,20 @@ var fullname = state_fullnames[state_name];
 	count = 0;
 	animatedNo = 0;
 	dayAmt = 0;
-	function flightsPerDay(day,dayno,callback1,callback2) {
-		console.log('beginning day uno')
-		if (dayno === 28) {return;}
+	//if goToDate = 28, then it should be the 27th day
+	function flightsPerDay(dayno) {
+		console.log(goToDate)
+		if (dayno === 28){return;}
 		var arrays = [], size = 100;
+		day = flights[dayno];
 		dayAmt = day.length;
-		console.log("heres nno of flights in total day: " + dayAmt);
 		while (day.length > 0)
    		arrays.push(day.splice(0, size));
    		arrays.forEach(function(flights) {
    			//console.log('launching chunk : ' + count)
-			callback2(flights,0,dayno);
+			flightsPerChunk(flights,0,dayno);
 			count += 1
 		});
-		console.log('done with first dayyy')
 		//callback1(dayno,spreadDisease);
 		
 	}
@@ -496,14 +500,18 @@ var fullname = state_fullnames[state_name];
 		//chunk.forEach(function(flight) {
 		srcCoords = [airports[flight.src].longitude, airports[flight.src].latitude];
 		destCoords = [airports[flight.dest].longitude, airports[flight.dest].latitude];
+
 		fly(airports[flight.src],airports[flight.dest]);
-		animateFlight(srcCoords, destCoords,chunk,no,dayno);
-		
+		if (dayno !== goToDate-1) {
+			unloadPlane(dayno);
+		} else {
+			animateFlight(srcCoords, destCoords,chunk,no,dayno);
+		}
+			
 		//});
 	}
 
 	function unloadPlane(dayno) {
-		console.log('should only be printed once')
 		for (airport in airports) {
 			var a = airports[airport]
 			a.spreadRatio = (a.newInfected+a.oldInfected)/a.incoming
@@ -521,25 +529,31 @@ var fullname = state_fullnames[state_name];
 			a.oldInfected = 0
 		}
 		//callback(dayno,flightsPerDay);
-		spreadDisease();
+		spreadDisease(dayno+1);
 	}
-	function spreadDisease() {
+	function spreadDisease(dayno) {
 	//function spreadDisease(dayno,callback) {
 		console.log('spreading')
 		for (state in states) {
 			var s = states[state];
 			s.oldInfected += s.newInfected
 			potNew = r0*s.newInfected
-			if (potNew > s.population) {potNew = s.population-s.oldInfected}
+			if (potNew+s.oldInfected > s.population) {
+				console.log('this is potentail new ill: ' + potNew)
+				potNew = s.population-s.oldInfected}
 			s.newInfected = potNew
+			if (state === 'WY') {
+				console.log(s);
+			}
 		}
+		flightsPerDay(dayno)
+
 		//callback(flights[dayno],dayno+1,unloadPlane,flightsPerChunk);
 	}
 
 
 	//What will be used to display the airplanes flying from airport to airport
-	function animateFlight(srcCoords, destCoords,chunk,no,dayno){
-		console.log('animate anytime')
+	function animateFlight(srcCoords, destCoords,chunk,no,dayno,goToDate){
 	var route = svg.append("path")
                .datum({type: "LineString", coordinates: [srcCoords, destCoords]})
                .attr("class", "route")
@@ -559,7 +573,7 @@ var fullname = state_fullnames[state_name];
         	if (animatedNo === dayAmt) {
         		console.log('is it done?')
         		animatedNo = 0;
-        		unloadPlane(dayno);
+        		unloadPlane(dayno,goToDate);
         		
         	} else {
         		/*console.log('this is # of animated planes: ' + animatedNo);
@@ -601,24 +615,28 @@ var fullname = state_fullnames[state_name];
 	// src and dest are objects in airport
 	function fly(src, dest) {
 		// Get people on plane and to dest airport
-		newInfectedProb = states[src.state].newInfected/states[src.state].population
-		oldInfectedProb = states[src.state].oldInfected/states[src.state].population
-		console.log(states[src.state].population)
-		infected = 0;
+		
+		//console.log(states[src.state].population)
+		newinfected = 0;
+		oldinfected = 0;
 		for (var i = 0; i < 10; i++) {
 			r = Math.random();
+			newInfectedProb = states[src.state].newInfected/states[src.state].population
+			oldInfectedProb = states[src.state].oldInfected/states[src.state].population
 			if (r < newInfectedProb && states[src.state].newInfected > 0) {
-				infected += 1
+				newinfected += 1
 				dest.newInfected += 1
 				states[src.state].newInfected -= 1
 			} else if (r < newInfectedProb + oldInfectedProb) {
+				oldinfected += 1
 				dest.oldInfected += 1
 				states[src.state].oldInfected -= 1
 			}
 			dest.incoming += 1
 			states[src.state].population -= 1
 		}
-		console.log(infected + ' that was how many you wanted')
+		console.log(newinfected + ' that was how many NEW you wanted')
+		console.log(oldinfected + ' that was how many OLD you wanted')
 		
 
 	};
