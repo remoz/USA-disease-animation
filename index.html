@@ -224,7 +224,7 @@ color: #FE8402
 </select>
  <br> <br>
  Flight Animation Speed<br>
-fast <input type="range" id="myrange" min="1" max="500"> slow
+fast <input type="range" id="myrange" min=".5" max="100"> slow
 <br> <br> 
 <button type="button" id="set">Set Map!</button> <div id="feedback">
 
@@ -245,7 +245,7 @@ fast <input type="range" id="myrange" min="1" max="500"> slow
 
 <script>
 
-var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0};
+var trial_details = { 'R0': 0, 'Disease': 'Something', 'Init_State': 'Somewhere', 'Num_patientzeros': 0 , 'Speed' : 250};
 
 // Add drop down menu to select disease
 
@@ -312,6 +312,7 @@ var state_fullnames = {
 d3.select("#set").on("click", function () {
 
 		var speed = document.getElementById("myrange").value;
+		trial_details['Speed'] = speed;
 		var hi = document.getElementById("feedback");
 	
 		hi.innerHTML = "Settings have been stored!";
@@ -515,13 +516,15 @@ var fullname = state_fullnames[state_name];
 	
 	});
 	
+	};
+	
 	//creates the interface you see after you run a day of the simulation, with options to choose which day to view, along with a story blurb about the disease spread.
 	function createinterface(){
 		document.getElementById("disease_story").style.visibility = "visible";
 		document.getElementById("chooseday").style.visibility = "visible";
 		
-		document.getElementById("disease_story").innerHTML = "The story will go here.";
-	}
+		document.getElementById("disease_story").innerHTML = "<h3> Breaking News: </h3> "+ trial_details['Disease'] + " running amok in " + state_fullnames[trial_details['Init_State']] + "! <br> <br>" + stories[rand];
+	};
 
 	function randomState() {
 	    var result;
@@ -681,6 +684,7 @@ var fullname = state_fullnames[state_name];
 			s.newInfected = potNew
 		}
 		update_state_colors("#87E293", "#E82246");
+		createinterface();
 		flightsPerDay(dayno+1,goToDate)
 
 	}
@@ -699,7 +703,7 @@ var fullname = state_fullnames[state_name];
     plane.style('opacity',1).style('fill','white');
     var l = route.node().getTotalLength();
     plane.transition()
-        .duration(l * 1)
+        .duration(l * trial_details['Speed'])
         .attrTween("transform", delta(route.node()))
         .each("end", function() { 
         	route.remove(); 
